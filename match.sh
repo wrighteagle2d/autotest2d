@@ -21,6 +21,6 @@ exec > $RSTLOG
 
 for i in $RANGE; do
 	$SERVER $START_LEFT $START_RIGHT $GAME_LOG_DIR $TEXT_LOG_DIR $ADDITION_OPTS
-	sleep 1
+	sleep 5
 done
 
