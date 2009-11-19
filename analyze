@@ -1,0 +1,17 @@
+#!/bin/bash
+
+RESULT="result"
+AAWK="analyze.awk"
+GNUPLOT="./plot.gnuplot"
+
+cat result_* > ${RESULT}
+
+LN=`grep 'Score' ${RESULT} | wc -l`
+RGS=`seq 1 ${LN}`
+
+exec > plot
+
+echo "#count win_rate expected_win_rate"
+grep 'Score' $RESULT | awk -f $AAWK
+
+exec $GNUPLOT

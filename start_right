@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ulimit -t 1000
+cd ../helios && ./start -h $1
