@@ -1,6 +1,5 @@
 #!/bin/bash
 
-killall test.sh
 killall match.sh
 killall -9 rcssserver
 
