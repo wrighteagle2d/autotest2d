@@ -20,6 +20,15 @@ cd /home/baj/autotest-ms
 ./result.sh
 
 /bin/cat << EOM
+<HR SIZE=5>
+EOM
+
+./analyze -b > plot
+
+/bin/cat << EOM
+<p>
+<img src="http://192.168.26.3/pp.png">
+</p>
 </PRE>
 </SMALL>
 <P>
