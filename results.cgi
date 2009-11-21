@@ -23,7 +23,7 @@ cd /home/baj/autotest-ms
 <HR SIZE=5>
 EOM
 
-./analyze -b > plot
+./analyze -b
 
 /bin/cat << EOM
 <p>
