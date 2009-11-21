@@ -19,7 +19,7 @@ EOM
 cd /home/baj/autotest-ms
 ./result.sh
 
-CAT << EOM
+/bin/cat << EOM
 </PRE>
 </SMALL>
 <P>

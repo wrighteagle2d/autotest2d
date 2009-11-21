@@ -4,7 +4,6 @@ BEGIN {
 	l_points = 0;
 	r_points = 0;
 	game_count = 0;
-	max_sub = 0;
 	win = 0;
 	lost = 0;
 	draw = 0;
@@ -41,16 +40,7 @@ BEGIN {
 	l_points += l_point;
 	r_points += r_point;
 
-	tmp = max(max_sub, abs(l_score - r_score));
-	if (tmp > max_sub)
-	{
-		max_sub = tmp;
-		print  "\033[4;32;40m" game_count "\t" l_score ":" r_score "\t" l_point ":" r_point "\033[0m";
-	}
-	else
-	{
-		print game_count "\t" l_score ":" r_score "\t" l_point ":" r_point;
-	}
+	print game_count "\t" l_score ":" r_score "\t" l_point ":" r_point;
 }
 
 END {
