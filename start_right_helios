@@ -1,5 +1,4 @@
 #!/bin/bash
 
-killall helios_player
-killall helios_coach 
-cd ../helios && ./start 1>/dev/null 2>&1 
+ulimit -t 1000
+cd ../helios && ./start -h $1 1>/dev/null 2>&1
