@@ -4,6 +4,10 @@ RESULT="result"
 AAWK="analyze.awk"
 GNUPLOT="./plot.gnuplot"
 
+if [ ! -z $1 ]; then
+	GNUPLOT="./plot_batch.gnuplot"
+fi
+
 cat result_* > ${RESULT}
 
 LN=`grep 'Score' ${RESULT} | wc -l`

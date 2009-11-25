@@ -24,9 +24,8 @@ BEGIN {
 	}
 
 	win_rate = win / game_count;
-	draw_rate = draw / game_count;
 	lost_rate = lost / game_count;
-	expected_win_rate = win_rate + draw_rate * win_rate;
+	expected_win_rate = win_rate / (win_rate + lost_rate);
 
 	print game_count, win_rate, expected_win_rate;
 }

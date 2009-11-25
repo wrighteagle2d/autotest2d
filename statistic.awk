@@ -58,7 +58,6 @@ END {
 
 	win_rate = win / game_count;
 	lost_rate = lost / game_count;
-	draw_rate = draw / game_count;
 	expected_win_rate = win_rate / (win_rate + lost_rate);
 
 	print "Left Team: Win " win, "Draw " draw, "Lost " lost;

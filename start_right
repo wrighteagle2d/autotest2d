@@ -1,5 +1,4 @@
 #!/bin/bash
 
 ulimit -t 1000
-
-cd ../lsuamoynq && ./start $1 1>/dev/null 2>&1 
+cd ../WE2009_cvs && ./startWE2009.sh $1 1>/dev/null 2>&1
