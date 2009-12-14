@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER=`which rcssserver`
+SERVER="./server.sh"
 RANGE=`seq 1 100`
 
 SERVER_HOST="localhost"
