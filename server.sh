@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ulimit -t 100
+ulimit -t 180
 
 rcssserver $*
