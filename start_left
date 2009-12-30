@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ulimit -t 180
-cd ../WE2009 && ./startWE2009.sh $1 1>/dev/null 2>&1
+cd ../WE2010 && ./start.sh $1 1>/dev/null 2>&1
