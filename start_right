@@ -1,4 +1,5 @@
 #!/bin/bash
 
 ulimit -t 180
+
 cd ../helios && ./start -h $1 1>/dev/null 2>&1
