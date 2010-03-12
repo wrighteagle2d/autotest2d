@@ -15,14 +15,14 @@ match() {
 	LOGDIR="log_$SERVER_HOST"
 
 	OPTIONS=""
-	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $SERVER_HOST\""
-	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $SERVER_HOST\""
+	OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
 	OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\""
 	OPTIONS="$OPTIONS -server::text_log_dir=\"./$LOGDIR/\""
+	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $SERVER_HOST\""
+	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $SERVER_HOST\""
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=true -server::text_logging=false"
-	OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
 
 	mkdir $LOGDIR
 	exec > $RESULT
