@@ -41,15 +41,20 @@ BEGIN {
 	l_points += l_point;
 	r_points += r_point;
 
-	tmp = max(max_sub, abs(l_score - r_score));
-	if (tmp > max_sub)
+	tmp = abs(l_score - r_score);
+	if (tmp >= max_sub)
 	{
 		max_sub = tmp;
 		print  "\033[01;33m" game_count "\t" l_score ":" r_score "\t" l_point ":" r_point "\033[0m";
 	}
 	else
 	{
-		print game_count "\t" l_score ":" r_score "\t" l_point ":" r_point;
+		if (tmp > 4) {
+			print  "\033[01;32m" game_count "\t" l_score ":" r_score "\t" l_point ":" r_point "\033[0m";
+		}
+		else {
+			print game_count "\t" l_score ":" r_score "\t" l_point ":" r_point;
+		}
 	}
 }
 
@@ -72,6 +77,12 @@ END {
 
 	print "Left Team: Win " win, "Draw " draw, "Lost " lost;
 	print "Left Team: WinRate " percentage(win_rate) "%", "ExpectedWinRate " percentage(expected_win_rate) "%";
+
+	getline total_rounds < "./total_rounds"
+	max_win_rate = (total_rounds - lost - draw) / total_rounds;
+	max_expected_win_rate = (total_rounds - lost) / total_rounds;
+
+	print "Left Team: MaxWinRate " percentage(max_win_rate) "%", "MaxExpectedWinRate " percentage(max_expected_win_rate) "%";
 }
 
 function percentage(x)
@@ -79,26 +90,4 @@ function percentage(x)
 	return (int((x * 100000 + 5) / 10)) / 100;
 }
 
-function max(a, b)
-{
-	if (a > b)
-	{
-		return a;
-	}
-	else
-	{
-		return b;
-	}
-}
-
-function abs(a)
-{
-	if (a > 0)
-	{
-		return a;
-	}
-	else
-	{
-		return -a;
-	}
-}
+function abs(x) { return x < 0? -x: x; }
