@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MATCHES=1
+MATCHES=3
 ROUNDS=100
 
 server() {
