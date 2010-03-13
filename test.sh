@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MATCHES=3
+MATCHES=1
 ROUNDS=100
 
 server() {
@@ -41,13 +41,13 @@ match() {
 }
 
 autotest() {
+    export LANG=POSIX
 	./clear.sh
 
 	TOTAL_ROUNDS=`expr $MATCHES '*' $ROUNDS`
 	echo $TOTAL_ROUNDS > total_rounds
 
     if [ $MATCHES -gt 1 ]; then
-        export LANG=POSIX
         IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
         SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
 
