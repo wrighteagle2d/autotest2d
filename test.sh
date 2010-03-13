@@ -25,7 +25,7 @@ match() {
 	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $SERVER_HOST\""
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
-	OPTIONS="$OPTIONS -server::game_logging=true -server::text_logging=false"
+	OPTIONS="$OPTIONS -server::game_logging=false -server::text_logging=false"
 
     if [ $BRANCHES -gt 1 ]; then
         OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
