@@ -2,6 +2,8 @@
 
 BRANCHES=3
 ROUNDS=100
+GAME_LOGGING=false
+TEXT_LOGGING=false
 
 server() {
 	ulimit -t 180
@@ -25,13 +27,16 @@ match() {
 	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $SERVER_HOST\""
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
-	OPTIONS="$OPTIONS -server::game_logging=false -server::text_logging=false"
+	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
 
     if [ $BRANCHES -gt 1 ]; then
         OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
     fi
 
-	mkdir $LOGDIR
+    if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
+        mkdir $LOGDIR
+    fi
+
 	exec > $RESULT
 
 	for i in `seq 1 $ROUNDS`; do
