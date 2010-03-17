@@ -4,6 +4,7 @@ BRANCHES=3
 ROUNDS=100
 GAME_LOGGING=false
 TEXT_LOGGING=false
+####################################
 
 server() {
 	ulimit -t 180
