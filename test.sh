@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCHES=3
+PROCES=3
 ROUNDS=100
 GAME_LOGGING=false
 TEXT_LOGGING=false
@@ -30,7 +30,7 @@ match() {
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
 
-    if [ $BRANCHES -gt 1 ]; then
+    if [ $PROCES -gt 1 ]; then
         OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
     fi
 
@@ -50,15 +50,15 @@ autotest() {
     export LANG=POSIX
 	./clear.sh
 
-	TOTAL_ROUNDS=`expr $BRANCHES '*' $ROUNDS`
+	TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
 	echo $TOTAL_ROUNDS > total_rounds
 
-    if [ $BRANCHES -gt 1 ]; then
+    if [ $PROCES -gt 1 ]; then
         IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
         SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
 
         i=0
-        while [ $i -lt $BRANCHES ] && [ $i -lt ${#SERVER_HOSTS[@]} ]; do
+        while [ $i -lt $PROCES ] && [ $i -lt ${#SERVER_HOSTS[@]} ]; do
             match ${SERVER_HOSTS[$i]} &
             i=`expr $i + 1`
             sleep 30
