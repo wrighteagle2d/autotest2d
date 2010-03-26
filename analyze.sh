@@ -2,11 +2,17 @@
 
 RESULT="result"
 RESULT_DIR="result.d"
-AWKFILE="../statistic.awk"
+AWKFILE="../analyze.awk"
+GNUPLOT="../plot.gnuplot"
 
 cd $RESULT_DIR
 cat `ls -1 -r --sort=t 192.168.*` >$RESULT
 
-grep '\<vs\>' $RESULT  | uniq | sed -e 's/\t//g'
-echo
+exec > plot
+
+echo "#count win_rate expected_win_rate"
 grep 'Score' $RESULT | awk -f $AWKFILE
+
+exec $GNUPLOT
+
+
