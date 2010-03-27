@@ -1,7 +1,7 @@
 #!/bin/bash
 
-PROCES=1
-ROUNDS=300
+PROCES=3
+ROUNDS=100
 GAME_LOGGING="false"
 TEXT_LOGGING="false"
 RESULT_DIR="result.d"
