@@ -25,13 +25,16 @@ killall_server() {
 test_host_option() {
     OPTIONS="-server::host=\"127.0.0.1\""
 	OPTIONS="$OPTIONS -server::game_logging=false -server::text_logging=false"
+
     killall_server
     server $OPTIONS 1>/dev/null 2>&1 &
     sleep 1
+
     if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then
         SUPPORT_HOST_OPTION="true"
         echo "Yes, it supports host option"
     fi
+
     killall_server
 }
 
