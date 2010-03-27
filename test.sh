@@ -59,11 +59,11 @@ autotest() {
             sleep 30
         done
     else
-        if [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
-            match ${SERVER_HOSTS[0]} &
-        else
+#        if [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
+#           match ${SERVER_HOSTS[0]} &
+#        else
             match localhost &
-        fi
+#        fi
     fi
 }
 
