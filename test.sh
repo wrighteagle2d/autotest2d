@@ -1,7 +1,7 @@
 #!/bin/bash
 
-PROCES=3
-ROUNDS=100
+PROCES=1
+ROUNDS=300
 GAME_LOGGING="false"
 TEXT_LOGGING="false"
 RESULT_DIR="result.d"
@@ -39,7 +39,7 @@ match() {
     fi
 
 	for i in `seq 1 $ROUNDS`; do
-        RESULT="$RESULT_DIR/${SERVER_HOST}_$i"
+        RESULT="$RESULT_DIR/result_${SERVER_HOST}_$i"
         server $OPTIONS 1>$RESULT 2>&1
 		sleep 5
 	done
