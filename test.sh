@@ -4,12 +4,32 @@ PROCES=1
 ROUNDS=100
 GAME_LOGGING="true"
 TEXT_LOGGING="false"
+
+###############
+
 RESULT_DIR="result.d"
-####################################
+SUPPORT_HOST_OPTION="false"
 
 server() {
 	ulimit -t 180
 	rcssserver $*
+}
+
+killall_server() {
+    exec 2>/dev/null
+
+    killall -9 rcssserver
+    killall -9 rcssserver.bin
+}
+
+test_host_option() {
+    OPTION="-server::host=\"127.0.0.1\""
+    killall_server
+    server $OPTION &
+    if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then
+        SUPPORT_HOST_OPTION="true"
+    fi
+    killall_server
 }
 
 match() {
@@ -25,7 +45,7 @@ match() {
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
 
-    if [ $PROCES -gt 1 ]; then
+    if [ $SUPPORT_HOST_OPTION = "true" ]; then
         OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
     fi
 
@@ -51,6 +71,8 @@ autotest() {
     IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
     SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
 
+    test_host_option
+
     if [ $PROCES -gt 1 ]; then
         i=0
         while [ $i -lt $PROCES ] && [ $i -lt ${#SERVER_HOSTS[@]} ]; do
@@ -59,11 +81,11 @@ autotest() {
             sleep 30
         done
     else
-#        if [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
-#           match ${SERVER_HOSTS[0]} &
-#        else
+        if [ $SUPPORT_HOST_OPTION = "true" ] && [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
+           match ${SERVER_HOSTS[0]} &
+        else
             match localhost &
-#        fi
+        fi
     fi
 }
 
