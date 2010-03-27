@@ -1,8 +1,8 @@
 #!/bin/bash
 
-PROCES=3
+PROCES=1
 ROUNDS=100
-GAME_LOGGING="false"
+GAME_LOGGING="true"
 TEXT_LOGGING="false"
 RESULT_DIR="result.d"
 ####################################
@@ -13,12 +13,7 @@ server() {
 }
 
 match() {
-    SERVER_HOST=localhost
-
-    if [ ! -z $1 ]; then
-        SERVER_HOST=$1
-    fi
-
+    SERVER_HOST=$1
 	LOGDIR="log_$SERVER_HOST"
 
 	OPTIONS=""
@@ -53,10 +48,10 @@ autotest() {
 	TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
 	echo $TOTAL_ROUNDS > $RESULT_DIR/total_rounds
 
-    if [ $PROCES -gt 1 ]; then
-        IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
-        SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
+    IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
+    SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
 
+    if [ $PROCES -gt 1 ]; then
         i=0
         while [ $i -lt $PROCES ] && [ $i -lt ${#SERVER_HOSTS[@]} ]; do
             match ${SERVER_HOSTS[$i]} &
@@ -64,7 +59,11 @@ autotest() {
             sleep 30
         done
     else
-        match &
+        if [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
+            match ${SERVER_HOSTS[0]} &
+        else
+            match localhost &
+        fi
     fi
 }
 
