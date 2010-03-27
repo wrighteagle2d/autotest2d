@@ -1,14 +1,13 @@
 #!/bin/bash
 
-PROCES=1
+PROCES=3
 ROUNDS=100
-GAME_LOGGING="true"
+GAME_LOGGING="false"
 TEXT_LOGGING="false"
 
 ###############
 
 RESULT_DIR="result.d"
-SUPPORT_HOST_OPTION="false"
 
 server() {
 	ulimit -t 180
@@ -16,30 +15,31 @@ server() {
 }
 
 killall_server() {
-    exec 2>/dev/null
-
     killall -9 rcssserver
     killall -9 rcssserver.bin
 }
 
 test_host_option() {
+	SUPPORT_HOST_OPTION="false"
+
     OPTIONS="-server::host=\"127.0.0.1\""
 	OPTIONS="$OPTIONS -server::game_logging=false -server::text_logging=false"
 
-    killall_server
+    killall_server 1>/dev/null 2>&1
     server $OPTIONS 1>/dev/null 2>&1 &
     sleep 1
-
     if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then
-        SUPPORT_HOST_OPTION="true"
-        echo "Yes, it supports host option"
+       SUPPORT_HOST_OPTION="true"
     fi
+    killall_server 1>/dev/null 2>&1
 
-    killall_server
+	echo $SUPPORT_HOST_OPTION
 }
 
 match() {
     SERVER_HOST=$1
+	USE_HOST=$2
+
 	LOGDIR="log_$SERVER_HOST"
 
 	OPTIONS=""
@@ -51,7 +51,7 @@ match() {
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
 
-    if [ $SUPPORT_HOST_OPTION = "true" ]; then
+    if [ $USE_HOST = "true" ]; then
         OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
     fi
 
@@ -74,25 +74,23 @@ autotest() {
 	TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
 	echo $TOTAL_ROUNDS > $RESULT_DIR/total_rounds
 
-    IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
-    SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
+	if [ `test_host_option` = "true" ]; then
+		IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
+		SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
 
-    test_host_option
-
-    if [ $PROCES -gt 1 ]; then
-        i=0
-        while [ $i -lt $PROCES ] && [ $i -lt ${#SERVER_HOSTS[@]} ]; do
-            match ${SERVER_HOSTS[$i]} &
-            i=`expr $i + 1`
-            sleep 30
-        done
-    else
-        if [ $SUPPORT_HOST_OPTION = "true" ] && [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
-           match ${SERVER_HOSTS[0]} &
-        else
-            match localhost &
-        fi
-    fi
+		if [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
+			i=0
+			while [ $i -lt $PROCES ] && [ $i -lt ${#SERVER_HOSTS[@]} ]; do
+				match ${SERVER_HOSTS[$i]} true &
+				i=`expr $i + 1`
+				sleep 30
+			done
+		else
+			match localhost true &
+		fi
+	else
+		match localhost false &
+	fi
 }
 
 if [ $# -gt 0 ]; then
