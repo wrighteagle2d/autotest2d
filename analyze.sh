@@ -6,7 +6,7 @@ AWKFILE="../analyze.awk"
 GNUPLOT="../plot.gnuplot"
 
 cd $RESULT_DIR 2>/dev/null || exit
-cat `ls -1 -r --sort=t result_*` >$RESULT
+cat `ls -1 | grep '[0-9]\+' | sort -n` >$RESULT
 
 exec > plot
 

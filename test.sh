@@ -60,8 +60,10 @@ match() {
     fi
 
 	for i in `seq 1 $ROUNDS`; do
-        RESULT="$RESULT_DIR/result_${SERVER_HOST}_$i"
-        server $OPTIONS 1>$RESULT 2>&1
+        RESULT="$RESULT_DIR/`date +%s`"
+		if [ `ls -1 $RESULT 2>/dev/null | wc -l` -le 0 ]; then
+			server $OPTIONS 1>$RESULT 2>&1
+		fi
 		sleep 5
 	done
 }
