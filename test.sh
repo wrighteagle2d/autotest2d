@@ -74,7 +74,8 @@ autotest() {
 
     mkdir $RESULT_DIR
 	TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
-	echo $TOTAL_ROUNDS > $RESULT_DIR/total_rounds
+	echo $TOTAL_ROUNDS >$RESULT_DIR/total_rounds
+    echo `date` >$RESULT_DIR/time_stamp
 
 	if [ `test_host_option` = "true" ]; then
 		IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
