@@ -1,8 +1,8 @@
 #!/bin/bash
 
-PROCES=2              #同时比赛的server个数
+PROCES=3              #同时比赛的server个数
 ROUNDS=100            #每个测试过程的比赛场数
-CONTINUE="true"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
+CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"  #是否记录rcg
 TEXT_LOGGING="false"  #是否记录rcl
 
@@ -81,8 +81,8 @@ autotest() {
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
         echo `date` >$TIME_STAMP_FILE
     else
-        if [ `ls -1 $TOTAL_ROUNDS_FILE | wc -l` -le 0 ]; then
-            echo "Error: previous test result missed"
+        if [ `ls -1 $TOTAL_ROUNDS_FILE 2>/dev/null | wc -l` -le 0 ]; then
+			echo "Error: can not find previous test result"
             exit
         fi
         TOTAL_ROUNDS=`cat $TOTAL_ROUNDS_FILE`
