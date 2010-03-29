@@ -1,13 +1,16 @@
 #!/bin/bash
 
-PROCES=3
-ROUNDS=100
-GAME_LOGGING="false"
-TEXT_LOGGING="false"
+PROCES=2              #同时比赛的server个数
+ROUNDS=100            #每个测试过程的比赛场数
+CONTINUE="true"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
+GAME_LOGGING="false"  #是否记录rcg
+TEXT_LOGGING="false"  #是否记录rcl
 
 ###############
 
 RESULT_DIR="result.d"
+TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
+TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
 
 server() {
 	ulimit -t 180
@@ -19,7 +22,7 @@ killall_server() {
     killall -9 rcssserver.bin
 }
 
-test_host_option() {
+support_host_option() {
 	SUPPORT_HOST_OPTION="false"
 
     OPTIONS="-server::host=\"127.0.0.1\""
@@ -69,15 +72,26 @@ match() {
 }
 
 autotest() {
-    export LANG=POSIX
-	./clear.sh
+    export LANG="POSIX"
 
-    mkdir $RESULT_DIR
-	TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
-	echo $TOTAL_ROUNDS >$RESULT_DIR/total_rounds
-    echo `date` >$RESULT_DIR/time_stamp
+    if [ $CONTINUE = "false" ]; then
+        ./clear.sh
+        mkdir $RESULT_DIR
+        TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
+        echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
+        echo `date` >$TIME_STAMP_FILE
+    else
+        if [ `ls -1 $TOTAL_ROUNDS_FILE | wc -l` -le 0 ]; then
+            echo "Error: previous test result missed"
+            exit
+        fi
+        TOTAL_ROUNDS=`cat $TOTAL_ROUNDS_FILE`
+        TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS + $TOTAL_ROUNDS`
+        echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
+        echo `date` >>$TIME_STAMP_FILE
+    fi
 
-	if [ `test_host_option` = "true" ]; then
+	if [ `support_host_option` = "true" ]; then
 		IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
 		SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
 
