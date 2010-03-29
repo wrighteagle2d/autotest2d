@@ -81,12 +81,12 @@ autotest() {
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
         echo `date` >$TIME_STAMP_FILE
     else
-        if [ `ls -1 $TOTAL_ROUNDS_FILE 2>/dev/null | wc -l` -le 0 ]; then
+        if [ `ls -1 $TIME_STAMP_FILE 2>/dev/null | wc -l` -le 0 ]; then
 			echo "Error: can not find previous test result"
             exit
         fi
-        TOTAL_ROUNDS=`cat $TOTAL_ROUNDS_FILE`
-        TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS + $TOTAL_ROUNDS`
+        PRE_TOTAL_ROUNDS=`./result.sh | awk '{print $3}' | grep '[013]:[013]' | wc -l`
+        TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS + $PRE_TOTAL_ROUNDS`
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
         echo `date` >>$TIME_STAMP_FILE
     fi
