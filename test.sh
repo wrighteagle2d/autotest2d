@@ -75,7 +75,10 @@ autotest() {
     export LANG="POSIX"
 
     if [ $CONTINUE = "false" ]; then
-        ./clear.sh
+        if [ `ls -1 $TIME_STAMP_FILE 2>/dev/null | wc -l` -gt 0 ]; then
+			echo "Warning: previous test result left, backuped"
+			mv $RESULT_DIR ${RESULT_DIR}_`date +"%F_%H%M"`
+        fi
         mkdir $RESULT_DIR
         TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
