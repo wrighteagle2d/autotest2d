@@ -75,16 +75,16 @@ autotest() {
     export LANG="POSIX"
 
     if [ $CONTINUE = "false" ]; then
-        if [ `ls -1 $TIME_STAMP_FILE 2>/dev/null | wc -l` -gt 0 ]; then
+        if [ -d $RESULT_DIR ]; then
 			echo "Warning: previous test result left, backuped"
 			mv $RESULT_DIR ${RESULT_DIR}_`date +"%F_%H%M"`
         fi
-        mkdir $RESULT_DIR
+        mkdir $RESULT_DIR || exit
         TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
         echo `date` >$TIME_STAMP_FILE
     else
-        if [ `ls -1 $TIME_STAMP_FILE 2>/dev/null | wc -l` -le 0 ]; then
+        if [ ! -d $RESULT_DIR ]; then
 			echo "Error: can not find previous test result"
             exit
         fi
