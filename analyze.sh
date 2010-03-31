@@ -4,7 +4,7 @@ RESULT="result"
 RESULT_DIR="result.d"
 AWKFILE="../analyze.awk"
 PLOTDATA="./plot"
-GNUPLOT="../plot.gnuplot"
+GNUPLOT="../plot.gp"
 
 if [ ! -z $1 ]; then
     RESULT_DIR=$1
