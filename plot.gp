@@ -14,8 +14,8 @@
 #    
 #    	Send bug reports and suggestions to <http://sourceforge.net/projects/gnuplot>
 #    
-# set terminal x11 
-# set output
+set terminal png
+set output "result.png" 
 unset clip points
 set clip one
 unset clip two
