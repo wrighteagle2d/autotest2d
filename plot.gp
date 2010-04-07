@@ -14,7 +14,7 @@
 #    
 #    	Send bug reports and suggestions to <http://sourceforge.net/projects/gnuplot>
 #    
-set terminal png
+set terminal png medium size 1280,800
 set output "result.png" 
 unset clip points
 set clip one
@@ -43,7 +43,7 @@ set format y2 "% g"
 set format z "% g"
 set format cb "% g"
 set angles radians
-unset grid
+set grid
 set key title ""
 set key inside right top vertical Right noreverse enhanced autotitles nobox
 set key noinvert samplen 4 spacing 1 width 0 height 0 
@@ -142,6 +142,6 @@ set colorbox vertical origin screen 0.9, 0.2, 0 size screen 0.05, 0.6, 0 front b
 set loadpath 
 set fontpath 
 set fit noerrorvariables
-GNUTERM = "x11"
+show grid
 plot 'plot' u 1:2 w l title "win rate", 'plot' u 1:3 w l title "expected win rate"
 #    EOF
