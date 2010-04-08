@@ -41,9 +41,9 @@ class GameData:
         sub = abs(left_score - rigt_score)
         if sub >= g_max_sub:
             g_max_sub = sub
-            header = "\033[01;33m"
+            header = "\033[01;33m\n"
         elif sub > 4:
-            header = "\033[01;32m"
+            header = "\033[01;32m\n"
 
         return "%s%d\t%d:%d\t%d:%d\t%d\033[0m" % (header, index, left_score, rigt_score, left_points, right_points, valid)
 
