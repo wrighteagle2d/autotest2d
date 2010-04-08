@@ -77,8 +77,6 @@ class GameData:
 total_game = GameData()
 valid_game = GameData()
 
-print "No.\tScore\tPoint\tValid";
-
 index = 0
 for line in sys.stdin:
     index += 1
@@ -91,10 +89,15 @@ for line in sys.stdin:
     if valid:
         valid_game.update(index, left_score, right_score, valid)
 
+if total_game.count <= 0:
+    print "No results found, exit"
+    sys.exit(1)
+
 header = ""
 if total_game.count > 0 and valid_game.count < total_game.count:
     header = "    "
 
+print "No.\tScore\tPoint\tValid";
 print
 
 if header:
