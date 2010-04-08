@@ -50,21 +50,22 @@ class GameData:
     def dump(self, header):
         game_count = float(self.count)
 
-        print "%sCount: %d" % (header, self.count)
+        if header:
+            print "%sCount: %d" % (header, self.count)
         if self.count <= 0:
             print
             return
 
-        print "%sGoals: %d : %d" % (header, self.left_goals, self.right_goals)
-        print "%sPoints: %d : %d" % (header, self.left_points, self.right_points)
+        print "%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals)
+        print "%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points)
 
         avg_left_goals = self.left_goals / game_count
         avg_right_goals = self.right_goals / game_count
-        print "%sAvg Goals: %f:%f (diff: %f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals)
+        print "%sAvg Goals: %f : %f (diff: %f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals)
 
         avg_left_points = self.left_points / game_count
         avg_right_points = self.right_points / game_count
-        print "%sAvg Points: %f:%f (diff: %f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points)
+        print "%sAvg Points: %f : %f (diff: %f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points)
 
         win_rate = self.win_count / game_count
         lost_rate = self.lost_count / game_count
