@@ -96,16 +96,19 @@ if total_game.count > 0 and valid_game.count < total_game.count:
     header = "    "
 
 print
-print
 
 if header:
+    print
     print "Total Game:"
     total_game.dump(header)
+
     print
     print "Only Valid Game:"
     valid_game.dump(header)
 
+    print
     print "Non Valid Game Count: %d" % (total_game.count - valid_game.count)
     print "Non Valid Game Rate: %f%%" % ((total_game.count - valid_game.count) / float(total_game.count) * 100)
 else :
+    print
     total_game.dump(header)
