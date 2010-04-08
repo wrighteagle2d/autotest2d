@@ -2,7 +2,7 @@
 
 RESULT_DIR="result.d"
 PARSE="../parse.awk"
-PROCESS="../process.awk"
+PROCESS="../process.py"
 
 if [ ! -z $1 ]; then
     RESULT_DIR=$1
@@ -20,4 +20,4 @@ parseall() {
 
 cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g'
 echo
-parseall | ../process.py
+parseall | $PROCESS
