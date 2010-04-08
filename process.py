@@ -92,17 +92,13 @@ for line in sys.stdin:
     if valid:
         valid_game.update(index, left_score, right_score, valid)
 
-header = ""
-if total_game.count > 0 and valid_game.count < total_game.count:
-    header = "    "
-
 print
 print "Total Game:"
-total_game.dump(header)
+total_game.dump("    ")
 
-if header:
+if total_game.count > 0:
     print "Only Valid Game:"
-    valid_game.dump(header)
+    valid_game.dump("    ")
 
     print "Non Valid Game Count: %d" % (total_game.count - valid_game.count)
     print "Non Valid Game Rate: %f%%" % ((total_game.count - valid_game.count) / float(total_game.count) * 100)
