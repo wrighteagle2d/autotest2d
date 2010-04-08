@@ -1,6 +1,7 @@
 #!/bin/bash
 
 FILTER="false"
+#FILTER="true"
 
 while read FILE; do
     if [ ! $FILTER = "true" ]; then
