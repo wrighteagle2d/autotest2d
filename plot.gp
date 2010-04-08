@@ -14,7 +14,7 @@
 #    
 #    	Send bug reports and suggestions to <http://sourceforge.net/projects/gnuplot>
 #    
-set terminal png medium font '/usr/share/fonts/truetype/ttf-dejavu/DejaVuSansCondensed.ttf,13' size 1280,800
+set terminal png font '/usr/share/fonts/truetype/ttf-dejavu/DejaVuSansCondensed.ttf,11' size 1280,800
 set output "result.png" 
 unset clip points
 set clip one
