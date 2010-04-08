@@ -1,7 +1,7 @@
 #!/bin/bash
 
+FILTER="true"
 FILTER="false"
-#FILTER="true"
 
 
 if [ ! $FILTER = "true" ]; then
