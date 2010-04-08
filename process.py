@@ -73,8 +73,6 @@ class GameData:
         print "%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count)
         print "%sLeft Team: WinRate %f%%, ExpectedWinRate %f%%" % (header, win_rate * 100, expected_win_rate * 100)
 
-        print
-
 
 total_game = GameData()
 valid_game = GameData()
@@ -98,10 +96,12 @@ if total_game.count > 0 and valid_game.count < total_game.count:
     header = "    "
 
 print
+print
 
 if header:
     print "Total Game:"
     total_game.dump(header)
+    print
     print "Only Valid Game:"
     valid_game.dump(header)
 
