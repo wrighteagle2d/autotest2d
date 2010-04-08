@@ -20,4 +20,4 @@ parseall() {
 
 cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g'
 echo
-parseall | $PROCESS
+parseall | python $PROCESS

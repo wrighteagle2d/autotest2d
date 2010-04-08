@@ -48,8 +48,26 @@ class GameData:
         return "%s%d\t%d:%d\t%d:%d\t%d\033[0m" % (header, index, left_score, rigt_score, left_points, right_points, valid)
 
     def dump(self, header):
+        game_count = float(self.count)
+
         print "%sCount: %d" % (header, self.count)
         print "%sGoals: %d : %d" % (header, self.left_goals, self.right_goals)
+        print "%sPoints: %d : %d" % (header, self.left_points, self.right_points)
+
+        avg_left_goals = self.left_goals / game_count
+        avg_right_goals = self.right_goals / game_count
+        print "%sAvg Goals: %f:%f (diff: %f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals)
+
+        avg_left_points = self.left_points / game_count
+        avg_right_points = self.right_points / game_count
+        print "%sAvg Points: %f:%f (diff: %f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points)
+
+        win_rate = self.win_count / game_count
+        lost_rate = self.lost_count / game_count
+        expected_win_rate = win_rate / (win_rate + lost_rate)
+        print "%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count)
+        print "%sLeft Team: WinRate %f%%, ExpectedWinRate %f%%" % (header, win_rate * 100, expected_win_rate * 100)
+
         print
 
 
