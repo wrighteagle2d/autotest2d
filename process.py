@@ -96,4 +96,4 @@ print "Only Valid Game"
 valid_game.dump("    ")
 
 print "Non Valid Game Count: %d" % (total_game.count - valid_game.count)
-print "Non Valid Game Rate: %f" % ((total_game.count - valid_game.count) / float(total_game.count))
+print "Non Valid Game Rate: %f%%" % ((total_game.count - valid_game.count) / float(total_game.count) * 100)
