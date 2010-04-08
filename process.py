@@ -51,6 +51,10 @@ class GameData:
         game_count = float(self.count)
 
         print "%sCount: %d" % (header, self.count)
+        if self.count <= 0:
+            print
+            return
+
         print "%sGoals: %d : %d" % (header, self.left_goals, self.right_goals)
         print "%sPoints: %d : %d" % (header, self.left_points, self.right_points)
 
