@@ -39,7 +39,7 @@ class GameData:
 
         header = ""
         sub = abs(left_score - rigt_score)
-        if sub > 4:
+        if sub >= 5:
             header = "\033[01;32m\n"
             if sub >= g_max_sub:
                 g_max_sub = sub
