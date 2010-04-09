@@ -4,20 +4,37 @@ import sys
 
 g_max_sub = 0
 
+def gen_indent(indent) :
+    header = ""
+    for i in range(indent):
+        header += "    "
+    return header
+
 class GameData:
     count = 0
+
     left_goals = 0
     right_goals = 0
+
     left_points = 0
     right_points = 0
+
     win_count = 0
     draw_count = 0
     lost_count = 0
+
+    left_score_map = {}
+    right_score_map = {}
+    diff_score_map = {}
 
     def update(self, index, left_score, rigt_score, valid):
         global g_max_sub
 
         self.count += 1
+
+        self.left_score_map[left_score] = self.left_score_map.get(left_score, 0) + 1
+        self.right_score_map[right_score] = self.right_score_map.get(right_score, 0) + 1
+        self.diff_score_map[left_score - right_score] = self.diff_score_map.get(left_score - right_score, 0) + 1
 
         left_points = 0
         right_points = 0
@@ -47,11 +64,34 @@ class GameData:
 
         return "%s%d\t%d:%d\t%d:%d\t%d\033[0m" % (header, index, left_score, rigt_score, left_points, right_points, valid)
 
-    def dump(self, header):
+    def dump_score_map(self, indent, score_map):
+        def bar(percentage):
+            length = 25
+            bar_length = length * percentage
+
+            line = "["
+            for i in range(bar_length):
+                line += "#"
+            for i in range(length - bar_length):
+                line += " "
+            line += "%.2f%%" % (percentage * 100)
+            
+            return line
+
+        indent += 1
+        header = gen_indent(indent)
+        lines = []
+        for score in sorted(score_map.keys()):
+            lines.append("%s%d:\t%s" % (header, score, bar(score_map[score] / float(self.count))))
+
+        return lines
+
+    def dump(self, indent):
         game_count = float(self.count)
 
-        if header:
-            print "%sCount: %d" % (header, self.count)
+        header = gen_indent(indent)
+        print "%sCount: %d" % (header, self.count)
+
         if self.count <= 0:
             print
             return
@@ -61,17 +101,27 @@ class GameData:
 
         avg_left_goals = self.left_goals / game_count
         avg_right_goals = self.right_goals / game_count
-        print "%sAvg Goals: %f : %f (diff: %f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals)
+        print "%sAvg Goals: %.2f : %.2f (diff: %.2f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals)
 
         avg_left_points = self.left_points / game_count
         avg_right_points = self.right_points / game_count
-        print "%sAvg Points: %f : %f (diff: %f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points)
+        print "%sAvg Points: %.2f : %.2f (diff: %.2f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points)
 
         win_rate = self.win_count / game_count
         lost_rate = self.lost_count / game_count
         expected_win_rate = win_rate / (win_rate + lost_rate)
         print "%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count)
-        print "%sLeft Team: WinRate %f%%, ExpectedWinRate %f%%" % (header, win_rate * 100, expected_win_rate * 100)
+        print "%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100)
+
+        print "\n%sLeft Team Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.left_score_map) :
+            print line
+        print "\n%sRight Team Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.right_score_map) :
+            print line
+        print "\n%sDiff Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.diff_score_map) :
+            print line
 
 
 total_game = GameData()
@@ -95,24 +145,24 @@ if total_game.count <= 0:
     print "No results found, exit"
     sys.exit(1)
 
-header = ""
+indent = 0
 if total_game.count > 0 and valid_game.count < total_game.count:
-    header = "    "
+    indent = 1
 
 print
 
-if header:
+if indent:
     print
     print "Total Game:"
-    total_game.dump(header)
+    total_game.dump(indent)
 
     print
     print "Valid Game:"
-    valid_game.dump(header)
+    valid_game.dump(indent)
 
     print
     print "Non Valid Game Count: %d" % (total_game.count - valid_game.count)
-    print "Non Valid Game Rate: %f%%" % ((total_game.count - valid_game.count) / float(total_game.count) * 100)
+    print "Non Valid Game Rate: %.2f%%" % ((total_game.count - valid_game.count) / float(total_game.count) * 100)
 else :
     print
-    total_game.dump(header)
+    total_game.dump(indent)
