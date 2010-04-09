@@ -10,9 +10,6 @@ fi
 
 cd $RESULT_DIR 2>/dev/null || exit
 
-RESULT=`mktemp`
-RESULT_LIST=`ls -1 | grep '[0-9]\+' | sort -n`
-
 parseall() {
     for i in $RESULT_LIST; do
         cat $i | awk -f $PARSE
@@ -33,6 +30,8 @@ spinner() {
 spinner &
 SPINNER_PID=$!
 
+RESULT=`mktemp`
+RESULT_LIST=`ls -1 | grep '[0-9]\+' | sort -n`
 cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >>$RESULT
 echo >>$RESULT
 parseall | python $PROCESS >>$RESULT
