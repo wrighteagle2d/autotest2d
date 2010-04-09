@@ -27,9 +27,6 @@ class GameData:
     right_score_map = {}
     diff_score_map = {}
 
-    def __init__(self, is_total=True):
-        self.is_total = is_total
-
     def update(self, index, left_score, rigt_score, valid):
         global g_max_sub
 
@@ -59,13 +56,15 @@ class GameData:
 
         header = ""
         sub = abs(left_score - rigt_score)
-        if sub >= 5:
-            header = "\033[01;32m\n"
-            if sub >= g_max_sub:
-                g_max_sub = sub
-                header = "\033[01;33m\n"
+        if sub >= g_max_sub:
+            g_max_sub = sub
+            header = "\033[01;33m" #yellow
+        elif sub >= 5:
+            header = "\033[01;32m" #green
+        if not valid:
+            header = "\033[01;31m" #red -- non valid game
 
-        return "%s%d\t%d:%d\t%d:%d\t%d\033[0m" % (header, index, left_score, rigt_score, left_points, right_points, valid)
+        return "%s%d\t%d:%d\t%d:%d\033[0m" % (header, index, left_score, rigt_score, left_points, right_points)
 
     def dump_score_map(self, indent, score_map):
         def bar(percentage):
@@ -89,34 +88,33 @@ class GameData:
         header = gen_indent(indent)
         lines = []
         for score in sorted(score_map.keys()):
-            lines.append("%s%3d:%s%s" % (header, score, gen_indent(1), bar(score_map[score] / float(self.count))))
+            lines.append("%s%3d:%s%3d %s" % (header, score, gen_indent(1), score_map[score], bar(score_map[score] / float(self.count))))
 
         return lines
 
     def dump(self, indent):
         if self.count <= 0:
-            print "%sCount: %d" % (header, self.count)
+            print "%sGame Count: %d" % (header, self.count)
             return
 
         game_count = float(self.count)
         header = gen_indent(indent)
 
-        if self.is_total:
-            print "%sLeft Team Goals Distribution:" % (header)
-            for line in self.dump_score_map(indent, self.left_score_map) :
-                print line
-            print
-            print "%sRight Team Goals Distribution:" % (header)
-            for line in self.dump_score_map(indent, self.right_score_map) :
-                print line
-            print
-            print "%sDiff Goals Distribution:" % (header)
-            for line in self.dump_score_map(indent, self.diff_score_map) :
-                print line
-            print
-            print
+        print "%sLeft Team Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.left_score_map) :
+            print line
+        print
+        print "%sRight Team Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.right_score_map) :
+            print line
+        print
+        print "%sDiff Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.diff_score_map) :
+            print line
 
-        print "%sCount: %d" % (header, self.count)
+        print
+        print
+        print "%sGame Count: %d" % (header, self.count)
 
         print "%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals)
         print "%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points)
@@ -136,12 +134,12 @@ class GameData:
         print "%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100)
 
 
-total_game = GameData(True)
-valid_game = GameData(False)
+total_game = GameData()
 
-print "No.\tScore\tPoint\tValid";
+print "No.\tScore\tPoint";
 
 index = 0
+non_valid_game_count = 0
 for line in sys.stdin:
     index += 1
     parts = line.split()
@@ -150,31 +148,18 @@ for line in sys.stdin:
 
     (left_score, right_score, valid) = parts
     print total_game.update(index, left_score, right_score, valid)
-    if valid:
-        valid_game.update(index, left_score, right_score, valid)
+    if not valid:
+        non_valid_game_count += 1
 
 if total_game.count <= 0:
     print "No results found, exit"
     sys.exit(1)
 
-indent = 0
-if total_game.count > 0 and valid_game.count < total_game.count:
-    indent = 1
-
 print
+print "Total Game:"
+total_game.dump(0)
 
-if indent:
+if non_valid_game_count:
     print
-    print "Total Game:"
-    total_game.dump(indent)
-
-    print
-    print "Valid Game:"
-    valid_game.dump(indent)
-
-    print
-    print "Non Valid Game Count: %d" % (total_game.count - valid_game.count)
-    print "Non Valid Game Rate: %.2f%%" % ((total_game.count - valid_game.count) / float(total_game.count) * 100)
-else :
-    print
-    total_game.dump(indent)
+    print "Non Valid Game Count: %d" % (non_valid_game_count)
+    print "Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(total_game.count) * 100)
