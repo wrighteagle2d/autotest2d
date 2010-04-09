@@ -111,6 +111,7 @@ class GameData:
             print line
 
         print
+        print
         print "%sCount: %d" % (header, self.count)
 
         print "%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals)
