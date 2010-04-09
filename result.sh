@@ -33,7 +33,6 @@ spinner(){
         echo -n '\' ; sleep $DELAY
         echo -n '|' ; sleep $DELAY
     done
-    echo -n ''
 }
 
 rm -f $MARK
