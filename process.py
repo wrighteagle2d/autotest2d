@@ -55,13 +55,14 @@ class GameData:
         self.right_points += right_points
 
         header = ""
-        sub = abs(left_score - rigt_score)
-        if sub >= g_max_sub:
-            g_max_sub = sub
-            header = "\033[01;33m" #yellow
-        elif sub >= 5:
-            header = "\033[01;32m" #green
-        if not valid:
+        if valid:
+            sub = abs(left_score - rigt_score)
+            if sub >= g_max_sub:
+                g_max_sub = sub
+                header = "\033[01;33m" #yellow
+            elif sub >= 5:
+                header = "\033[01;32m" #green
+        else:
             header = "\033[01;31m" #red -- non valid game
 
         return "%s%d\t%d:%d\t%d:%d\033[0m" % (header, index, left_score, rigt_score, left_points, right_points)
