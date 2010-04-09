@@ -20,7 +20,7 @@ parseall() {
     done
 }
 
-spinner(){
+spinner() {
     local DELAY=0.05
     while [ -f $MARK ]; do
         echo -n '/' ; sleep $DELAY
