@@ -22,11 +22,6 @@ parseall() {
 
 spinner(){
     local DELAY=0.05
-    sleep $DELAY
-    while [ ! -f $MARK ]; do
-        sleep $DELAY
-    done
-
     while [ -f $MARK ]; do
         echo -n '/' ; sleep $DELAY
         echo -n '-' ; sleep $DELAY
@@ -36,8 +31,8 @@ spinner(){
 }
 
 rm -f $MARK
-spinner &
 touch $MARK
+spinner &
 cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >$RESULT
 echo >$RESULT
 parseall | python $PROCESS >$RESULT
