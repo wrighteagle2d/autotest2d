@@ -69,12 +69,13 @@ class GameData:
             length = 25
             bar_length = length * percentage
 
-            line = "["
+            percentage_string = "%.2f%%" % (percentage * 100)
+            while len(percentage_string) <= 6:
+                percentage_string = " " + percentage_string
+
+            line = "%s [" % (percentage_string)
             for i in range(bar_length):
                 line += "#"
-            for i in range(length - bar_length):
-                line += "-"
-            line += "] %.2f%%" % (percentage * 100)
             
             return line
 
@@ -82,7 +83,7 @@ class GameData:
         header = gen_indent(indent)
         lines = []
         for score in sorted(score_map.keys()):
-            lines.append("%s%3d:\t%s" % (header, score, bar(score_map[score] / float(self.count))))
+            lines.append("%s%3d:    %s" % (header, score, bar(score_map[score] / float(self.count))))
 
         return lines
 
