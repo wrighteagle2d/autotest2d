@@ -107,7 +107,7 @@ if header:
     total_game.dump(header)
 
     print
-    print "Only Valid Game:"
+    print "Valid Game:"
     valid_game.dump(header)
 
     print
