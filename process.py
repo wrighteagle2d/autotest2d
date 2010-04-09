@@ -67,7 +67,7 @@ class GameData:
     def dump_score_map(self, indent, score_map):
         def bar(percentage):
             length = 25
-            bar_length = length * percentage
+            bar_length = int(length * percentage)
 
             percentage_string = "%.2f%%" % (percentage * 100)
             while len(percentage_string) <= 6:
