@@ -27,6 +27,9 @@ class GameData:
     right_score_map = {}
     diff_score_map = {}
 
+    def __init__(self, is_total=True):
+        self.is_total = is_total
+
     def update(self, index, left_score, rigt_score, valid):
         global g_max_sub
 
@@ -98,20 +101,21 @@ class GameData:
         game_count = float(self.count)
         header = gen_indent(indent)
 
-        print "%sLeft Team Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.left_score_map) :
-            print line
-        print
-        print "%sRight Team Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.right_score_map) :
-            print line
-        print
-        print "%sDiff Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.diff_score_map) :
-            print line
+        if self.is_total:
+            print "%sLeft Team Goals Distribution:" % (header)
+            for line in self.dump_score_map(indent, self.left_score_map) :
+                print line
+            print
+            print "%sRight Team Goals Distribution:" % (header)
+            for line in self.dump_score_map(indent, self.right_score_map) :
+                print line
+            print
+            print "%sDiff Goals Distribution:" % (header)
+            for line in self.dump_score_map(indent, self.diff_score_map) :
+                print line
+            print
+            print
 
-        print
-        print
         print "%sCount: %d" % (header, self.count)
 
         print "%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals)
@@ -132,8 +136,8 @@ class GameData:
         print "%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100)
 
 
-total_game = GameData()
-valid_game = GameData()
+total_game = GameData(True)
+valid_game = GameData(False)
 
 print "No.\tScore\tPoint\tValid";
 
