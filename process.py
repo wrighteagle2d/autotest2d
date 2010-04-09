@@ -91,14 +91,27 @@ class GameData:
         return lines
 
     def dump(self, indent):
-        game_count = float(self.count)
-
-        header = gen_indent(indent)
-        print "%sCount: %d" % (header, self.count)
-
         if self.count <= 0:
-            print
+            print "%sCount: %d" % (header, self.count)
             return
+
+        game_count = float(self.count)
+        header = gen_indent(indent)
+
+        print "%sLeft Team Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.left_score_map) :
+            print line
+        print
+        print "%sRight Team Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.right_score_map) :
+            print line
+        print
+        print "%sDiff Goals Distribution:" % (header)
+        for line in self.dump_score_map(indent, self.diff_score_map) :
+            print line
+
+        print
+        print "%sCount: %d" % (header, self.count)
 
         print "%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals)
         print "%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points)
@@ -116,16 +129,6 @@ class GameData:
         expected_win_rate = win_rate / (win_rate + lost_rate)
         print "%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count)
         print "%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100)
-
-        print "\n%sLeft Team Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.left_score_map) :
-            print line
-        print "\n%sRight Team Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.right_score_map) :
-            print line
-        print "\n%sDiff Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.diff_score_map) :
-            print line
 
 
 total_game = GameData()
