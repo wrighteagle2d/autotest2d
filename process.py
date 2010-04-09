@@ -135,7 +135,7 @@ class GameData:
         print "%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100)
 
 
-total_game = GameData()
+game = GameData()
 
 print "No.\tScore\tPoint";
 
@@ -148,19 +148,18 @@ for line in sys.stdin:
         parts[i] = int(parts[i])
 
     (left_score, right_score, valid) = parts
-    print total_game.update(index, left_score, right_score, valid)
+    print game.update(index, left_score, right_score, valid)
     if not valid:
         non_valid_game_count += 1
 
-if total_game.count <= 0:
+if game.count <= 0:
     print "No results found, exit"
     sys.exit(1)
 
 print
-print "Total Game:"
-total_game.dump(0)
+game.dump(0)
 
 if non_valid_game_count:
     print
     print "Non Valid Game Count: %d" % (non_valid_game_count)
-    print "Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(total_game.count) * 100)
+    print "Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(game.count) * 100)
