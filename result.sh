@@ -38,3 +38,4 @@ echo >$RESULT
 parseall | python $PROCESS >$RESULT
 rm -f $MARK
 cat $RESULT
+rm -f $RESULT
