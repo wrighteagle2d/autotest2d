@@ -3,7 +3,6 @@
 RESULT_DIR="result.d"
 PARSE="../parse.awk"
 PROCESS="../process.py"
-MARK="/tmp/result_running"
 
 if [ ! -z $1 ]; then
     RESULT_DIR=$1
@@ -22,7 +21,8 @@ parseall() {
 
 spinner() {
     local DELAY=0.05
-    while [ -f $MARK ]; do
+
+    while [ 1 ]; do
         echo -n '/' ; sleep $DELAY
         echo -n '-' ; sleep $DELAY
         echo -n '\' ; sleep $DELAY
@@ -30,12 +30,16 @@ spinner() {
     done
 }
 
-rm -f $MARK
-touch $MARK
 spinner &
+SPINNER_PID=$!
+
 cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >$RESULT
 echo >$RESULT
 parseall | python $PROCESS >$RESULT
-rm -f $MARK
+
+exec 2>/dev/null
+kill $SPINNER_PID
+
 cat $RESULT
 rm -f $RESULT
+
