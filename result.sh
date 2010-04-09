@@ -33,9 +33,9 @@ spinner() {
 spinner &
 SPINNER_PID=$!
 
-cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >$RESULT
-echo >$RESULT
-parseall | python $PROCESS >$RESULT
+cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >>$RESULT
+echo >>$RESULT
+parseall | python $PROCESS >>$RESULT
 
 exec 2>/dev/null
 kill $SPINNER_PID
