@@ -73,8 +73,8 @@ class GameData:
             for i in range(bar_length):
                 line += "#"
             for i in range(length - bar_length):
-                line += " "
-            line += "%.2f%%" % (percentage * 100)
+                line += "-"
+            line += "] %.2f%%" % (percentage * 100)
             
             return line
 
