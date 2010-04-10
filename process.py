@@ -179,7 +179,7 @@ class GameData:
 
         return lines
 
-    def format(self, indent):
+    def gen_content(self, indent):
         if self.count <= 0:
             self.add_line("%sGame Count: %d" % (header, self.count), Color.PURPLE)
             return
@@ -199,7 +199,7 @@ class GameData:
         for line in self.gen_score_map(indent, self.diff_score_map) :
             self.formatter.add_line(line)
 
-        self.add_line("\n\n")
+        self.add_line("\n")
         self.add_line("%sGame Count: %d" % (header, self.count), Color.PURPLE)
 
         self.add_line("%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals), Color.PURPLE)
@@ -240,10 +240,9 @@ class GameData:
             sys.exit(1)
 
         self.add_line("\n")
-        self.format(0)
+        self.gen_content(0)
 
         if non_valid_game_count:
-            self.add_line("\n")
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid_game_count, non_valid_game_count / float(self.count) * 100), Color.RED)
 
     def dump(self, method):
