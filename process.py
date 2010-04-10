@@ -9,7 +9,7 @@ class Color:
 class Face:
     (NORMAL, MONOSPACE) = range(2)
 
-class Formatter:
+class Context:
     class Line:
         def __init__(self, string, color=Color.NONE, face=Face.NORMAL):
             self.color = color
@@ -95,10 +95,10 @@ class GameData:
         self.right_score_map = {}
         self.diff_score_map = {}
 
-        self.formatter = Formatter()
+        self.context = Context()
 
     def add_line(self, string, color=Color.PURPLE, face=Face.NORMAL):
-        self.formatter.add_line(Formatter.Line(string, color, face))
+        self.context.add_line(Context.Line(string, color, face))
 
     def update(self, index, left_score, right_score, valid):
         self.count += 1
@@ -125,7 +125,7 @@ class GameData:
         self.left_points += left_points
         self.right_points += right_points
 
-        line = Formatter.Line("%d\t%d:%d\t%d:%d" % (index, left_score, right_score, left_points, right_points))
+        line = Context.Line("%d\t%d:%d\t%d:%d" % (index, left_score, right_score, left_points, right_points))
         if valid:
             sub = abs(left_score - right_score)
             if sub >= self.max_sub:
@@ -165,11 +165,11 @@ class GameData:
                 count = score_map[score]
                 percentage = score_map[score] / float(self.count)
 
-            lines.append(Formatter.Line("`%3d:\t%3d " % (score, count) + bar(percentage), color=Color.BLUE, face=Face.MONOSPACE))
+            lines.append(Context.Line("`%4d:%6d " % (score, count) + bar(percentage), color=Color.BLUE, face=Face.MONOSPACE))
 
         return lines
 
-    def gen_content(self):
+    def do_some_calc(self):
         if self.count <= 0:
             self.add_line("Game Count: %d" % (self.count))
             return
@@ -178,15 +178,15 @@ class GameData:
 
         self.add_line("Left Team Goals Distribution:")
         for line in self.gen_score_map(self.left_score_map) :
-            self.formatter.add_line(line)
+            self.context.add_line(line)
 
         self.add_line("\nRight Team Goals Distribution:")
         for line in self.gen_score_map(self.right_score_map) :
-            self.formatter.add_line(line)
+            self.context.add_line(line)
 
         self.add_line("\nDiff Goals Distribution:")
         for line in self.gen_score_map( self.diff_score_map) :
-            self.formatter.add_line(line)
+            self.context.add_line(line)
 
         self.add_line("\n")
         self.add_line("Game Count: %d" % (self.count))
@@ -208,11 +208,11 @@ class GameData:
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
-    def generate(self):
-        self.add_line("No.\tScore\tPoint")
+    def generate_context(self):
+        self.add_line("No.\tScore\tPoint\n")
 
         index = 0
-        non_valid_game_count = 0
+        non_valid = 0
         for line in sys.stdin:
             index += 1
             parts = line.split()
@@ -220,26 +220,21 @@ class GameData:
                 parts[i] = int(parts[i])
 
             (left_score, right_score, valid) = parts
-            self.formatter.add_line(self.update(index, left_score, right_score, valid))
+            self.context.add_line(self.update(index, left_score, right_score, valid))
             if not valid:
-                non_valid_game_count += 1
+                non_valid += 1
 
         if self.count <= 0:
             self.add_line("No results found, exit")
-            sys.exit(1)
+        else:
+            self.do_some_calc()
 
-        self.add_line("\n")
-        self.gen_content()
-
-        if non_valid_game_count:
-            self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid_game_count, non_valid_game_count / float(self.count) * 100), Color.RED)
-
-    def dump(self, method):
-        self.formatter.dump(method)
+        if non_valid:
+            self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
 
     def run(self, method):
-        self.generate()
-        self.dump(method)
+        self.generate_context()
+        self.context.dump(method)
 
 usage = "Usage: %prog [options]"
 
