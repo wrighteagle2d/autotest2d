@@ -244,8 +244,7 @@ class GameData:
 
         if non_valid_game_count:
             self.add_line("\n")
-            self.add_line("Non Valid Game Count: %d" % (non_valid_game_count), Color.RED)
-            self.add_line("Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(self.count) * 100), Color.RED)
+            self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid_game_count, non_valid_game_count / float(self.count) * 100), Color.RED)
 
     def dump(self, method):
         self.formatter.dump(method)
