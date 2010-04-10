@@ -11,21 +11,22 @@ def gen_indent(indent) :
     return header
 
 class GameData:
-    count = 0
+    def __init__(self):
+        self.count = 0
 
-    left_goals = 0
-    right_goals = 0
+        self.left_goals = 0
+        self.right_goals = 0
 
-    left_points = 0
-    right_points = 0
+        self.left_points = 0
+        self.right_points = 0
 
-    win_count = 0
-    draw_count = 0
-    lost_count = 0
+        self.win_count = 0
+        self.draw_count = 0
+        self.lost_count = 0
 
-    left_score_map = {}
-    right_score_map = {}
-    diff_score_map = {}
+        self.left_score_map = {}
+        self.right_score_map = {}
+        self.diff_score_map = {}
 
     def update(self, index, left_score, rigt_score, valid):
         global g_max_sub
