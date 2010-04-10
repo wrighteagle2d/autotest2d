@@ -185,7 +185,7 @@ class GameData:
             self.context.add_line(line)
 
         self.add_line("\nDiff Goals Distribution:")
-        for line in self.gen_score_map( self.diff_score_map) :
+        for line in self.gen_score_map(self.diff_score_map) :
             self.context.add_line(line)
 
         self.add_line("\n")
@@ -249,4 +249,3 @@ if options.discuz:
     GameData().run(discuz)
 else:
     GameData().run(console)
-
