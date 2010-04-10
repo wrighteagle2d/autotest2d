@@ -257,7 +257,7 @@ class GameData:
 usage = "Usage: %prog [options]"
 
 parser = OptionParser(usage=usage)
-parser.add_option("-C", "--console", action="store_true", dest="console", default=True, help="print to stdout [default]")
+parser.add_option("-C", "--console", action="store_true", dest="console", default=True, help="print to console [default]")
 parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print to stdout using discuz code")
 
 (options, args) = parser.parse_args()
