@@ -165,7 +165,7 @@ class GameData:
                 count = score_map[score]
                 percentage = score_map[score] / float(self.count)
 
-            lines.append(Context.Line("`%4d:%6d " % (score, count) + bar(percentage), color=Color.BLUE, face=Face.MONOSPACE))
+            lines.append(Context.Line("`%4d:%6d " % (score, count) + bar(percentage), Color.BLUE, Face.MONOSPACE))
 
         return lines
 
