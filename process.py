@@ -3,9 +3,8 @@
 import sys
 from optparse import OptionParser
 
-g_max_sub = 0
 class Color:
-    (NONE, RED, YELLOW, GREEN) = range(4)
+    (NONE, RED, ORANGE, GREEN, BLUE, PURPLE) = range(6)
 
 class Font:
     (NORMAL, MONOSPACE) = range(2)
@@ -34,10 +33,14 @@ def console(line):
 
     if line.color == Color.RED:
         string += "\033[01;31m"
-    elif line.color == Color.YELLOW:
-        string += "\033[01;33m"
     elif line.color == Color.GREEN:
         string += "\033[01;32m"
+    elif line.color == Color.ORANGE:
+        string += "\033[01;33m"
+    elif line.color == Color.BLUE:
+        string += "\033[01;34m"
+    elif line.color == Color.PURPLE:
+        string += "\033[01;35m"
 
     string += line.string
 
@@ -51,10 +54,14 @@ def discuz(line):
 
     if line.color == Color.RED:
         string += "[b][color=Red]"
-    elif line.color == Color.YELLOW:
-        string += "[b][color=Yellow]"
+    elif line.color == Color.ORANGE:
+        string += "[b][color=Orange]"
     elif line.color == Color.GREEN:
         string += "[b][color=Green]"
+    elif line.color == Color.BLUE:
+        string += "[b][color=Blue]"
+    elif line.color == Color.PURPLE:
+        string += "[b][color=Purple]"
 
     if line.font == Font.MONOSPACE:
         string += "[font=Monospace]"
@@ -81,6 +88,8 @@ class GameData:
     def __init__(self):
         self.count = 0
 
+        self.max_sub = 0
+
         self.left_goals = 0
         self.right_goals = 0
 
@@ -101,8 +110,6 @@ class GameData:
         self.formatter.add_line(Formatter.Line(string, color, font))
 
     def update(self, index, left_score, right_score, valid):
-        global g_max_sub
-
         self.count += 1
 
         self.left_score_map[left_score] = self.left_score_map.get(left_score, 0) + 1
@@ -130,9 +137,9 @@ class GameData:
         line = Formatter.Line("%d\t%d:%d\t%d:%d" % (index, left_score, right_score, left_points, right_points))
         if valid:
             sub = abs(left_score - right_score)
-            if sub >= g_max_sub:
-                g_max_sub = sub
-                line.color = Color.YELLOW
+            if sub >= self.max_sub:
+                self.max_sub = sub
+                line.color = Color.ORANGE
             elif sub >= 5:
                 line.color = Color.GREEN
         else:
@@ -168,52 +175,52 @@ class GameData:
                 count = score_map[score]
                 percentage = score_map[score] / float(self.count)
 
-            lines.append(Formatter.Line("%s%3d:%s%3d " % (header, score, gen_indent(1), count) + bar(percentage),font=Font.MONOSPACE))
+            lines.append(Formatter.Line("%s%3d:%s%3d " % (header, score, gen_indent(1), count) + bar(percentage), color=Color.BLUE, font=Font.MONOSPACE))
 
         return lines
 
     def format(self, indent):
         if self.count <= 0:
-            self.add_line("%sGame Count: %d" % (header, self.count))
+            self.add_line("%sGame Count: %d" % (header, self.count), Color.PURPLE)
             return
 
         game_count = float(self.count)
         header = gen_indent(indent)
 
-        self.add_line("%sLeft Team Goals Distribution:" % (header))
+        self.add_line("%sLeft Team Goals Distribution:" % (header), Color.PURPLE)
         for line in self.gen_score_map(indent, self.left_score_map) :
             self.formatter.add_line(line)
 
-        self.add_line("\n%sRight Team Goals Distribution:" % (header))
+        self.add_line("\n%sRight Team Goals Distribution:" % (header), Color.PURPLE)
         for line in self.gen_score_map(indent, self.right_score_map) :
             self.formatter.add_line(line)
 
-        self.add_line("\n%sDiff Goals Distribution:" % (header))
+        self.add_line("\n%sDiff Goals Distribution:" % (header), Color.PURPLE)
         for line in self.gen_score_map(indent, self.diff_score_map) :
             self.formatter.add_line(line)
 
         self.add_line("\n\n")
-        self.add_line("%sGame Count: %d" % (header, self.count))
+        self.add_line("%sGame Count: %d" % (header, self.count), Color.PURPLE)
 
-        self.add_line("%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals))
-        self.add_line("%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points))
+        self.add_line("%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals), Color.PURPLE)
+        self.add_line("%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points), Color.PURPLE)
 
         avg_left_goals = self.left_goals / game_count
         avg_right_goals = self.right_goals / game_count
-        self.add_line("%sAvg Goals: %.2f : %.2f (diff: %.2f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals))
+        self.add_line("%sAvg Goals: %.2f : %.2f (diff: %.2f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals), Color.PURPLE)
 
         avg_left_points = self.left_points / game_count
         avg_right_points = self.right_points / game_count
-        self.add_line("%sAvg Points: %.2f : %.2f (diff: %.2f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points))
+        self.add_line("%sAvg Points: %.2f : %.2f (diff: %.2f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points), Color.PURPLE)
 
         win_rate = self.win_count / game_count
         lost_rate = self.lost_count / game_count
         expected_win_rate = win_rate / (win_rate + lost_rate)
-        self.add_line("%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count))
-        self.add_line("%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100))
+        self.add_line("%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count), Color.PURPLE)
+        self.add_line("%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100), Color.PURPLE)
 
     def generate(self):
-        self.add_line("No.\tScore\tPoint")
+        self.add_line("No.\tScore\tPoint", Color.PURPLE)
 
         index = 0
         non_valid_game_count = 0
@@ -237,8 +244,8 @@ class GameData:
 
         if non_valid_game_count:
             self.add_line("\n")
-            self.add_line("Non Valid Game Count: %d" % (non_valid_game_count))
-            self.add_line("Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(self.count) * 100))
+            self.add_line("Non Valid Game Count: %d" % (non_valid_game_count), Color.RED)
+            self.add_line("Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(self.count) * 100), Color.RED)
 
     def dump(self, method):
         self.formatter.dump(method)
