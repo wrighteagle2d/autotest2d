@@ -6,14 +6,14 @@ from optparse import OptionParser
 class Color:
     (NONE, RED, ORANGE, GREEN, BLUE, PURPLE) = range(6)
 
-class Font:
+class Face:
     (NORMAL, MONOSPACE) = range(2)
 
 class Formatter:
     class Line:
-        def __init__(self, string, color=Color.NONE, font=Font.NORMAL):
+        def __init__(self, string, color=Color.NONE, face=Face.NORMAL):
             self.color = color
-            self.font = font
+            self.face = face
             self.string = string
 
     def __init__(self):
@@ -62,13 +62,13 @@ def discuz(line):
     elif line.color == Color.PURPLE:
         string += "[b][color=Purple]"
 
-    if line.font == Font.MONOSPACE:
-        string += "[font=Monospace]"
+    if line.face == Face.MONOSPACE:
+        string += "[face=Monospace]"
 
     string += line.string
 
-    if line.font != Font.NORMAL:
-        string += "[/font]"
+    if line.face != Face.NORMAL:
+        string += "[/face]"
     
     if line.color != Color.NONE:
         string += "[/color][/b]"
@@ -97,8 +97,8 @@ class GameData:
 
         self.formatter = Formatter()
 
-    def add_line(self, string, color=Color.PURPLE, font=Font.NORMAL):
-        self.formatter.add_line(Formatter.Line(string, color, font))
+    def add_line(self, string, color=Color.PURPLE, face=Face.NORMAL):
+        self.formatter.add_line(Formatter.Line(string, color, face))
 
     def update(self, index, left_score, right_score, valid):
         self.count += 1
@@ -165,7 +165,7 @@ class GameData:
                 count = score_map[score]
                 percentage = score_map[score] / float(self.count)
 
-            lines.append(Formatter.Line("`%3d:\t%3d " % (score, count) + bar(percentage), color=Color.BLUE, font=Font.MONOSPACE))
+            lines.append(Formatter.Line("`%3d:\t%3d " % (score, count) + bar(percentage), color=Color.BLUE, face=Face.MONOSPACE))
 
         return lines
 
