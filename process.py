@@ -209,7 +209,7 @@ class GameData:
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
     def generate_context(self):
-        self.add_line("No.\tScore\tPoint\n")
+        self.add_line("No.\tScore\tPoint")
 
         index = 0
         non_valid = 0
@@ -224,6 +224,7 @@ class GameData:
             if not valid:
                 non_valid += 1
 
+        self.add_line("\n")
         if self.count <= 0:
             self.add_line("No results found, exit")
         else:
