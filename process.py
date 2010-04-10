@@ -63,12 +63,12 @@ def discuz(line):
         string += "[b][color=Purple]"
 
     if line.face == Face.MONOSPACE:
-        string += "[face=Monospace]"
+        string += "[font=Monospace]"
 
     string += line.string
 
     if line.face != Face.NORMAL:
-        string += "[/face]"
+        string += "[/font]"
     
     if line.color != Color.NONE:
         string += "[/color][/b]"
