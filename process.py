@@ -175,7 +175,7 @@ class GameData:
                 count = score_map[score]
                 percentage = score_map[score] / float(self.count)
 
-            lines.append(Formatter.Line("%s%3d:%s%3d " % (header, score, gen_indent(1), count) + bar(percentage), color=Color.BLUE, font=Font.MONOSPACE))
+            lines.append(Formatter.Line("`%s%3d:%s%3d " % (header, score, gen_indent(1), count) + bar(percentage), color=Color.BLUE, font=Font.MONOSPACE))
 
         return lines
 
