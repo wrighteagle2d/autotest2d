@@ -8,6 +8,7 @@ BEGIN {
     left_score = -1
     right_score = -1
 }
+
 {
     if ($0 ~ /Waiting after end of match/) {
         waiting_ln = NR
