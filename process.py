@@ -26,7 +26,6 @@ class Formatter:
         for line in self.lines:
             print method(line)
 
-
 #dump methods
 def console(line):
     string = ""
@@ -76,14 +75,6 @@ def discuz(line):
 
     return string
 
-
-
-def gen_indent(indent) :
-    header = ""
-    for i in range(indent):
-        header += "    "
-    return header
-
 class GameData:
     def __init__(self):
         self.count = 0
@@ -106,7 +97,7 @@ class GameData:
 
         self.formatter = Formatter()
 
-    def add_line(self, string, color=Color.NONE, font=Font.NORMAL):
+    def add_line(self, string, color=Color.PURPLE, font=Font.NORMAL):
         self.formatter.add_line(Formatter.Line(string, color, font))
 
     def update(self, index, left_score, right_score, valid):
@@ -147,7 +138,7 @@ class GameData:
 
         return line
 
-    def gen_score_map(self, indent, score_map):
+    def gen_score_map(self, score_map):
         def bar(percentage):
             length = 33
             bar_length = int(length * percentage)
@@ -165,7 +156,6 @@ class GameData:
             
             return line
 
-        header = gen_indent(indent)
         lines = []
         scores = sorted(score_map.keys())
         for score in range(scores[0], scores[-1] + 1):
@@ -175,52 +165,51 @@ class GameData:
                 count = score_map[score]
                 percentage = score_map[score] / float(self.count)
 
-            lines.append(Formatter.Line("`%s%3d:%s%3d " % (header, score, gen_indent(1), count) + bar(percentage), color=Color.BLUE, font=Font.MONOSPACE))
+            lines.append(Formatter.Line("`%3d:\t%3d " % (score, count) + bar(percentage), color=Color.BLUE, font=Font.MONOSPACE))
 
         return lines
 
-    def gen_content(self, indent):
+    def gen_content(self):
         if self.count <= 0:
-            self.add_line("%sGame Count: %d" % (header, self.count), Color.PURPLE)
+            self.add_line("Game Count: %d" % (self.count))
             return
 
         game_count = float(self.count)
-        header = gen_indent(indent)
 
-        self.add_line("%sLeft Team Goals Distribution:" % (header), Color.PURPLE)
-        for line in self.gen_score_map(indent, self.left_score_map) :
+        self.add_line("Left Team Goals Distribution:")
+        for line in self.gen_score_map(self.left_score_map) :
             self.formatter.add_line(line)
 
-        self.add_line("\n%sRight Team Goals Distribution:" % (header), Color.PURPLE)
-        for line in self.gen_score_map(indent, self.right_score_map) :
+        self.add_line("\nRight Team Goals Distribution:")
+        for line in self.gen_score_map(self.right_score_map) :
             self.formatter.add_line(line)
 
-        self.add_line("\n%sDiff Goals Distribution:" % (header), Color.PURPLE)
-        for line in self.gen_score_map(indent, self.diff_score_map) :
+        self.add_line("\nDiff Goals Distribution:")
+        for line in self.gen_score_map( self.diff_score_map) :
             self.formatter.add_line(line)
 
         self.add_line("\n")
-        self.add_line("%sGame Count: %d" % (header, self.count), Color.PURPLE)
+        self.add_line("Game Count: %d" % (self.count))
 
-        self.add_line("%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals), Color.PURPLE)
-        self.add_line("%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points), Color.PURPLE)
+        self.add_line("Goals: %d : %d (diff: %d)" % (self.left_goals, self.right_goals, self.left_goals - self.right_goals))
+        self.add_line("Points: %d : %d (diff: %d)" % (self.left_points, self.right_points, self.left_points - self.right_points))
 
         avg_left_goals = self.left_goals / game_count
         avg_right_goals = self.right_goals / game_count
-        self.add_line("%sAvg Goals: %.2f : %.2f (diff: %.2f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals), Color.PURPLE)
+        self.add_line("Avg Goals: %.2f : %.2f (diff: %.2f)" % (avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals))
 
         avg_left_points = self.left_points / game_count
         avg_right_points = self.right_points / game_count
-        self.add_line("%sAvg Points: %.2f : %.2f (diff: %.2f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points), Color.PURPLE)
+        self.add_line("Avg Points: %.2f : %.2f (diff: %.2f)" % (avg_left_points, avg_right_points, avg_left_points - avg_right_points))
 
         win_rate = self.win_count / game_count
         lost_rate = self.lost_count / game_count
         expected_win_rate = win_rate / (win_rate + lost_rate)
-        self.add_line("%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count), Color.PURPLE)
-        self.add_line("%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100), Color.PURPLE)
+        self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
+        self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
     def generate(self):
-        self.add_line("No.\tScore\tPoint", Color.PURPLE)
+        self.add_line("No.\tScore\tPoint")
 
         index = 0
         non_valid_game_count = 0
@@ -240,7 +229,7 @@ class GameData:
             sys.exit(1)
 
         self.add_line("\n")
-        self.gen_content(0)
+        self.gen_content()
 
         if non_valid_game_count:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid_game_count, non_valid_game_count / float(self.count) * 100), Color.RED)
