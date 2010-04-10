@@ -137,7 +137,6 @@ class GameData:
 
 
 game = GameData()
-
 print "No.\tScore\tPoint";
 
 index = 0

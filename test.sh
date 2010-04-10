@@ -74,6 +74,11 @@ match() {
 autotest() {
     export LANG="POSIX"
 
+    if [ `pidof rcssserver | wc -l` -gt 0 ]; then
+        echo "Error: other server running, exit"
+        exit
+    fi
+
     if [ $CONTINUE = "false" ]; then
         if [ -d $RESULT_DIR ]; then
 			echo "Warning: previous test result left, backuped"
