@@ -86,7 +86,6 @@ class GameData:
             
             return line
 
-        indent += 1
         header = gen_indent(indent)
         lines = []
         for score in sorted(score_map.keys()):
