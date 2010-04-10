@@ -1,8 +1,75 @@
 #!/usr/bin/python
 
 import sys
+from optparse import OptionParser
 
 g_max_sub = 0
+class Color:
+    (NONE, RED, YELLOW, GREEN) = range(4)
+
+class Font:
+    (NORMAL, MONOSPACE) = range(2)
+
+class Formatter:
+    class Line:
+        def __init__(self, string, color=Color.NONE, font=Font.NORMAL):
+            self.color = color
+            self.font = font
+            self.string = string
+
+    def __init__(self):
+        self.lines = []
+
+    def add_line(self, line):
+        self.lines.append(line)
+
+    def dump(self, method):
+        for line in self.lines:
+            print method(line)
+
+
+#dump methods
+def console(line):
+    string = ""
+
+    if line.color == Color.RED:
+        string += "\033[01;31m"
+    elif line.color == Color.YELLOW:
+        string += "\033[01;33m"
+    elif line.color == Color.GREEN:
+        string += "\033[01;32m"
+
+    string += line.string
+
+    if line.color != Color.NONE:
+        string += "\033[0m"
+
+    return string
+
+def discuz(line):
+    string = ""
+
+    if line.color == Color.RED:
+        string += "[b][color=Red]"
+    elif line.color == Color.YELLOW:
+        string += "[b][color=Yellow]"
+    elif line.color == Color.GREEN:
+        string += "[b][color=Green]"
+
+    if line.font == Font.MONOSPACE:
+        string += "[font=Monospace]"
+
+    string += line.string
+
+    if line.font != Font.NORMAL:
+        string += "[/font]"
+    
+    if line.color != Color.NONE:
+        string += "[/color][/b]"
+
+    return string
+
+
 
 def gen_indent(indent) :
     header = ""
@@ -28,7 +95,12 @@ class GameData:
         self.right_score_map = {}
         self.diff_score_map = {}
 
-    def update(self, index, left_score, rigt_score, valid):
+        self.formatter = Formatter()
+
+    def add_line(self, string, color=Color.NONE, font=Font.NORMAL):
+        self.formatter.add_line(Formatter.Line(string, color, font))
+
+    def update(self, index, left_score, right_score, valid):
         global g_max_sub
 
         self.count += 1
@@ -39,10 +111,10 @@ class GameData:
 
         left_points = 0
         right_points = 0
-        if left_score > rigt_score:
+        if left_score > right_score:
             left_points += 3
             self.win_count += 1
-        elif left_score < rigt_score:
+        elif left_score < right_score:
             right_points += 3
             self.lost_count += 1
         else:
@@ -51,24 +123,24 @@ class GameData:
             self.draw_count += 1
 
         self.left_goals += left_score
-        self.right_goals += rigt_score
+        self.right_goals += right_score
         self.left_points += left_points
         self.right_points += right_points
 
-        header = ""
+        line = Formatter.Line("%d\t%d:%d\t%d:%d" % (index, left_score, right_score, left_points, right_points))
         if valid:
-            sub = abs(left_score - rigt_score)
+            sub = abs(left_score - right_score)
             if sub >= g_max_sub:
                 g_max_sub = sub
-                header = "\033[01;33m" #yellow
+                line.color = Color.YELLOW
             elif sub >= 5:
-                header = "\033[01;32m" #green
+                line.color = Color.GREEN
         else:
-            header = "\033[01;31m" #red -- non valid game
+            line.color = Color.RED
 
-        return "%s%d\t%d:%d\t%d:%d\033[0m" % (header, index, left_score, rigt_score, left_points, right_points)
+        return line
 
-    def dump_score_map(self, indent, score_map):
+    def gen_score_map(self, indent, score_map):
         def bar(percentage):
             length = 33
             bar_length = int(length * percentage)
@@ -95,76 +167,96 @@ class GameData:
             if score_map.has_key(score):
                 count = score_map[score]
                 percentage = score_map[score] / float(self.count)
-            lines.append("%s%3d:%s%3d %s" % (header, score, gen_indent(1), count, bar(percentage)))
+
+            lines.append(Formatter.Line("%s%3d:%s%3d " % (header, score, gen_indent(1), count) + bar(percentage),font=Font.MONOSPACE))
 
         return lines
 
-    def dump(self, indent):
+    def format(self, indent):
         if self.count <= 0:
-            print "%sGame Count: %d" % (header, self.count)
+            self.add_line("%sGame Count: %d" % (header, self.count))
             return
 
         game_count = float(self.count)
         header = gen_indent(indent)
 
-        print "%sLeft Team Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.left_score_map) :
-            print line
-        print
-        print "%sRight Team Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.right_score_map) :
-            print line
-        print
-        print "%sDiff Goals Distribution:" % (header)
-        for line in self.dump_score_map(indent, self.diff_score_map) :
-            print line
+        self.add_line("%sLeft Team Goals Distribution:" % (header))
+        for line in self.gen_score_map(indent, self.left_score_map) :
+            self.formatter.add_line(line)
 
-        print
-        print
-        print "%sGame Count: %d" % (header, self.count)
+        self.add_line("\n%sRight Team Goals Distribution:" % (header))
+        for line in self.gen_score_map(indent, self.right_score_map) :
+            self.formatter.add_line(line)
 
-        print "%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals)
-        print "%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points)
+        self.add_line("\n%sDiff Goals Distribution:" % (header))
+        for line in self.gen_score_map(indent, self.diff_score_map) :
+            self.formatter.add_line(line)
+
+        self.add_line("\n\n")
+        self.add_line("%sGame Count: %d" % (header, self.count))
+
+        self.add_line("%sGoals: %d : %d (diff: %d)" % (header, self.left_goals, self.right_goals, self.left_goals - self.right_goals))
+        self.add_line("%sPoints: %d : %d (diff: %d)" % (header, self.left_points, self.right_points, self.left_points - self.right_points))
 
         avg_left_goals = self.left_goals / game_count
         avg_right_goals = self.right_goals / game_count
-        print "%sAvg Goals: %.2f : %.2f (diff: %.2f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals)
+        self.add_line("%sAvg Goals: %.2f : %.2f (diff: %.2f)" % (header, avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals))
 
         avg_left_points = self.left_points / game_count
         avg_right_points = self.right_points / game_count
-        print "%sAvg Points: %.2f : %.2f (diff: %.2f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points)
+        self.add_line("%sAvg Points: %.2f : %.2f (diff: %.2f)" % (header, avg_left_points, avg_right_points, avg_left_points - avg_right_points))
 
         win_rate = self.win_count / game_count
         lost_rate = self.lost_count / game_count
         expected_win_rate = win_rate / (win_rate + lost_rate)
-        print "%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count)
-        print "%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100)
+        self.add_line("%sLeft Team: Win %d, Draw %d, Lost %d" % (header, self.win_count, self.draw_count, self.lost_count))
+        self.add_line("%sLeft Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (header, win_rate * 100, expected_win_rate * 100))
 
+    def generate(self):
+        self.add_line("No.\tScore\tPoint")
 
-game = GameData()
-print "No.\tScore\tPoint";
+        index = 0
+        non_valid_game_count = 0
+        for line in sys.stdin:
+            index += 1
+            parts = line.split()
+            for i in range(len(parts)):
+                parts[i] = int(parts[i])
 
-index = 0
-non_valid_game_count = 0
-for line in sys.stdin:
-    index += 1
-    parts = line.split()
-    for i in range(len(parts)):
-        parts[i] = int(parts[i])
+            (left_score, right_score, valid) = parts
+            self.formatter.add_line(self.update(index, left_score, right_score, valid))
+            if not valid:
+                non_valid_game_count += 1
 
-    (left_score, right_score, valid) = parts
-    print game.update(index, left_score, right_score, valid)
-    if not valid:
-        non_valid_game_count += 1
+        if self.count <= 0:
+            self.add_line("No results found, exit")
+            sys.exit(1)
 
-if game.count <= 0:
-    print "No results found, exit"
-    sys.exit(1)
+        self.add_line("\n")
+        self.format(0)
 
-print
-game.dump(0)
+        if non_valid_game_count:
+            self.add_line("\n")
+            self.add_line("Non Valid Game Count: %d" % (non_valid_game_count))
+            self.add_line("Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(self.count) * 100))
 
-if non_valid_game_count:
-    print
-    print "Non Valid Game Count: %d" % (non_valid_game_count)
-    print "Non Valid Game Rate: %.2f%%" % (non_valid_game_count / float(game.count) * 100)
+    def dump(self, method):
+        self.formatter.dump(method)
+
+    def run(self, method):
+        self.generate()
+        self.dump(method)
+
+usage = "Usage: %prog [options]"
+
+parser = OptionParser(usage=usage)
+parser.add_option("-C", "--console", action="store_true", dest="console", default=True, help="print to stdout [default]")
+parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print to stdout using discuz code")
+
+(options, args) = parser.parse_args()
+
+if options.discuz:
+    GameData().run(discuz)
+else:
+    GameData().run(console)
+

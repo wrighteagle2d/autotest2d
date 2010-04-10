@@ -4,10 +4,6 @@ RESULT_DIR="result.d"
 PARSE="../parse.awk"
 PROCESS="../process.py"
 
-if [ ! -z $1 ]; then
-    RESULT_DIR=$1
-fi
-
 cd $RESULT_DIR 2>/dev/null || exit
 
 parseall() {
@@ -34,7 +30,7 @@ RESULT=`mktemp`
 RESULT_LIST=`ls -1 | grep '[0-9]\+' | sort -n`
 cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >>$RESULT
 echo >>$RESULT
-parseall | python $PROCESS >>$RESULT
+parseall | python $PROCESS $* >>$RESULT
 
 exec 2>/dev/null
 kill $SPINNER_PID
