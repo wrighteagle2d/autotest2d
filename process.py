@@ -88,8 +88,12 @@ class GameData:
 
         header = gen_indent(indent)
         lines = []
-        for score in sorted(score_map.keys()):
-            lines.append("%s%3d:%s%3d %s" % (header, score, gen_indent(1), score_map[score], bar(score_map[score] / float(self.count))))
+        scores = sorted(score_map.keys())
+        for score in range(scores[0], scores[-1] + 1):
+            if score_map.has_key(score):
+                lines.append("%s%3d:%s%3d %s" % (header, score, gen_indent(1), score_map[score], bar(score_map[score] / float(self.count))))
+            else:
+                lines.append("%s%3d:%s%3d %s" % (header, score, gen_indent(1), 0, bar(0)))
 
         return lines
 
