@@ -6,12 +6,6 @@ PROCESS="../process.py"
 
 cd $RESULT_DIR 2>/dev/null || exit
 
-parseall() {
-    for i in $RESULT_LIST; do
-        cat $i | awk -f $PARSE
-    done
-}
-
 spinner() {
     local DELAY=0.05
 
@@ -30,6 +24,13 @@ RESULT=`mktemp`
 RESULT_LIST=`ls -1 | grep '[0-9]\+' | sort -n`
 cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >>$RESULT
 echo >>$RESULT
+
+parseall() {
+    for i in $RESULT_LIST; do
+        cat $i | awk -f $PARSE
+    done
+}
+
 parseall | python $PROCESS $* >>$RESULT
 
 exec 2>/dev/null
