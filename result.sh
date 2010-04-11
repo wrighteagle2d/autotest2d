@@ -34,13 +34,12 @@ parseall() {
     local CACHE_FILE="$CACHE_DIR/cache"
 
     mkdir $CACHE_DIR 2>/dev/null
+
     for i in $RESULT_LIST; do
-        if [ "$TITLE" = "N/A" ]; then
+        if [ "$TITLE" = "N/A" ] && [ ! -f $CACHE_DIR/title ]; then
             TITLE=`cat $i | grep '\<vs\>' | sed -e 's/\t//g'`
-            if [ ! -f $CACHE_DIR/title ]; then
-                touch $CACHE_DIR/title
-                echo $TITLE >>$CACHE_FILE
-            fi
+            touch $CACHE_DIR/title
+            echo $TITLE >>$CACHE_FILE
         fi
         if [ ! -f $CACHE_DIR/$i ]; then
             touch $CACHE_DIR/$i
