@@ -37,9 +37,11 @@ parseall() {
     for i in $RESULT_LIST; do
         if [ "$TITLE" = "N/A" ] && [ ! -f $CACHE_DIR/title ]; then
             TITLE=`cat $i | grep '\<vs\>' | sed -e 's/\t//g'`
-            echo $TITLE >>$CACHE_FILE
-            if [ `cat $i | grep 'Saving Results Complete' | wc -l` -gt 0 ]; then
-                touch $CACHE_DIR/title
+            if [ ! -z $TITLE ]; then
+                echo $TITLE >>$CACHE_FILE
+                if [ `cat $i | grep 'Saving Results Complete' | wc -l` -gt 0 ]; then
+                    touch $CACHE_DIR/title
+                fi
             fi
         fi
         if [ ! -f $CACHE_DIR/$i ]; then
