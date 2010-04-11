@@ -77,6 +77,7 @@ def discuz(line):
 
 def html(line):
     string = ""
+    line.face = Face.MONOSPACE #special case for html output
 
     if line.color == Color.RED:
         string += "<font color=Red>"
