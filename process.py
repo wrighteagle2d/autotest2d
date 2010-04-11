@@ -52,26 +52,26 @@ def discuz(line):
     string = ""
 
     if line.color == Color.RED:
-        string += "[b][color=Red]"
+        string += "[color=Red]"
     elif line.color == Color.ORANGE:
-        string += "[b][color=Orange]"
+        string += "[color=Orange]"
     elif line.color == Color.GREEN:
-        string += "[b][color=Green]"
+        string += "[color=Green]"
     elif line.color == Color.BLUE:
-        string += "[b][color=Blue]"
+        string += "[color=Blue]"
     elif line.color == Color.PURPLE:
-        string += "[b][color=Purple]"
+        string += "[color=Purple]"
 
     if line.face == Face.MONOSPACE:
         string += "[font=Monospace]"
 
-    string += line.string
+    string += "[b]" + line.string + "[/b]"
 
     if line.face != Face.NORMAL:
         string += "[/font]"
     
     if line.color != Color.NONE:
-        string += "[/color][/b]"
+        string += "[/color]"
 
     return string
 
@@ -80,26 +80,26 @@ def html(line):
     line.face = Face.MONOSPACE
 
     if line.color == Color.RED:
-        string += "<strong><font color=Red>"
+        string += "<font color=Red>"
     elif line.color == Color.ORANGE:
-        string += "<strong><font color=Orange>"
+        string += "<font color=Orange>"
     elif line.color == Color.GREEN:
-        string += "<strong><font color=Green>"
+        string += "<font color=Green>"
     elif line.color == Color.BLUE:
-        string += "<strong><font color=Blue>"
+        string += "<font color=Blue>"
     elif line.color == Color.PURPLE:
-        string += "<strong><font color=Purple>"
+        string += "<font color=Purple>"
 
     if line.face == Face.MONOSPACE:
         string += "<font face=Monospace>"
 
-    string += line.string.replace(" ", "&nbsp;")
+    string += "<strong>" + line.string.replace(" ", "&nbsp;") +  "</strong>"
 
     if line.face != Face.NORMAL:
         string += "</font>"
     
     if line.color != Color.NONE:
-        string += "</font></strong>"
+        string += "</font>"
 
     return string + "<br />"
 
