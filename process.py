@@ -284,7 +284,9 @@ parser.add_option("-H", "--html", action="store_true", dest="html", default=Fals
 
 lines = []
 for line in sys.stdin:
-    lines.append(line.rstrip())
+    line = line.rstrip()
+    if len(line) > 0:
+        lines.append(line)
 
 if options.discuz:
     GameData().run(lines, discuz)
