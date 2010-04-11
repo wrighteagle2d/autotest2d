@@ -77,20 +77,28 @@ match() {
 }
 
 generate_html() {
+    local BREAK="false"
+
     sleep 10
     while [ 1 ]; do
-        if [ `server_count` -gt 0 ]; then #test running
-            touch $HTML
-            chmod 777 $HTML
-            ./result.sh --html >$HTML
-            echo -e "<hr>" >>$HTML
-            echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
-        else
+        touch $HTML
+        chmod 777 $HTML
+        ./result.sh --html >$HTML
+        echo -e "<hr>" >>$HTML
+        echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
+
+        if [ $BREAK = "true" ]; then
+            break
+        fi
+
+        if [ `server_count` -eq 0 ]; then
             sleep 20
-            if [ `server_count`-eq 0 ]; then #test end
-                break;
+            if [ `server_count`-eq 0 ]; then
+                BREAK="true"
+                continue
             fi
         fi
+
         sleep 900
     done
 }
