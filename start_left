@@ -3,4 +3,4 @@
 ulimit -t 180
 ulimit -c unlimited
 
-cd ../WE2010 && ./start.sh $1 1>/dev/null 2>&1
+cd ../WE2010 && ./start.sh $1 Debug 1>/dev/null 2>&1

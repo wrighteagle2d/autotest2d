@@ -80,7 +80,7 @@ generate_html() {
             chmod 777 $HTML
             ./result.sh --html >$HTML
             echo -e "<hr>" >>$HTML
-            echo -e "<p>"`whoami`" @ "`date`"</p>" >>$HTML
+            echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
         else
             sleep 20
             if [ `pidof rcssserver | wc -l` -eq 0 ]; then #test end

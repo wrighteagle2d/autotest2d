@@ -65,7 +65,7 @@ def discuz(line):
     if line.face == Face.MONOSPACE:
         string += "[font=Monospace]"
 
-    string += "[b]" + line.string + "[/b]"
+    string += line.string
 
     if line.face != Face.NORMAL:
         string += "[/font]"
@@ -93,7 +93,7 @@ def html(line):
     if line.face == Face.MONOSPACE:
         string += "<font face=Monospace>"
 
-    string += "<strong>" + line.string.replace(" ", "&nbsp;") +  "</strong>"
+    string += line.string.replace(" ", "&nbsp;")
 
     if line.face != Face.NORMAL:
         string += "</font>"
