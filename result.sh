@@ -33,7 +33,8 @@ parseall() {
     local CACHE_FILE="$CACHE_DIR/cache"
 
     mkdir $CACHE_DIR 2>/dev/null
-    chmod 777 $CACHE_DIR 2>/dev/null
+    touch $CACHE_FILE
+    chmod 777 $CACHE_DIR $CACHE_FILE 2>/dev/null
 
     for i in $RESULT_LIST; do
         if [ "$TITLE" = "N/A" ]; then
