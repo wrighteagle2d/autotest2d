@@ -35,13 +35,10 @@ parseall() {
     mkdir $CACHE_DIR 2>/dev/null
 
     for i in $RESULT_LIST; do
-        if [ "$TITLE" = "N/A" ] && [ ! -f $CACHE_DIR/title ]; then
+        if [ "$TITLE" = "N/A" ]; then
             TITLE=`cat $i | grep '\<vs\>' | sed -e 's/\t//g'`
-            if [ ! -z $TITLE ]; then
-                echo $TITLE >>$CACHE_FILE
-                if [ `cat $i | grep 'Saving Results Complete' | wc -l` -gt 0 ]; then
-                    touch $CACHE_DIR/title
-                fi
+            if [ -z "$TITLE" ]; then
+                TITLE="N/A"
             fi
         fi
         if [ ! -f $CACHE_DIR/$i ]; then
@@ -52,6 +49,7 @@ parseall() {
         fi
     done
 
+    echo $TITLE
     cat $CACHE_FILE
 }
 
