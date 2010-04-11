@@ -30,22 +30,25 @@ echo >>$RESULT
 
 parseall() {
     local TITLE="N/A"
-    local CACHE_DIR="cache"
+    local CACHE_DIR="cache.d"
+    local CACHE_FILE="$CACHE_DIR/cache"
 
     mkdir $CACHE_DIR 2>/dev/null
     for i in $RESULT_LIST; do
         if [ "$TITLE" = "N/A" ]; then
             TITLE=`cat $i | grep '\<vs\>' | sed -e 's/\t//g'`
             if [ ! -f $CACHE_DIR/title ]; then
-                echo $TITLE >$CACHE_DIR/title
+                touch $CACHE_DIR/title
+                echo $TITLE >>$CACHE_FILE
             fi
-            cat $CACHE_DIR/title
         fi
         if [ ! -f $CACHE_DIR/$i ]; then
-            cat $i | awk -f $PARSE >$CACHE_DIR/$i
+            touch $CACHE_DIR/$i
+            cat $i | awk -f $PARSE >>$CACHE_FILE
         fi
-        cat $CACHE_DIR/$i
     done
+
+    cat $CACHE_FILE
 }
 
 parseall | python $PROCESS $* >>$RESULT
