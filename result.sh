@@ -25,7 +25,6 @@ fi
 
 RESULT=`mktemp`
 RESULT_LIST=`ls -1 | grep '[0-9]\+' | sort -n`
-#cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >>$RESULT
 echo >>$RESULT
 
 parseall() {

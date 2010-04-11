@@ -13,9 +13,13 @@ TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
 TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
 HTML="/tmp/result.html"
 
-server() {
+run_server() {
 	ulimit -t 180
 	rcssserver $*
+}
+
+server_count() {
+    ps -o pid= -C rcssserver | wc -l
 }
 
 killall_server() {
@@ -30,9 +34,9 @@ support_host_option() {
 	OPTIONS="$OPTIONS -server::game_logging=false -server::text_logging=false"
 
     killall_server 1>/dev/null 2>&1
-    server $OPTIONS 1>/dev/null 2>&1 &
+    run_server $OPTIONS 1>/dev/null 2>&1 &
     sleep 1
-    if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then
+    if [ `server_count` -gt 0 ]; then
        SUPPORT_HOST_OPTION="true"
     fi
     killall_server 1>/dev/null 2>&1
@@ -66,7 +70,7 @@ match() {
 	for i in `seq 1 $ROUNDS`; do
         RESULT="$RESULT_DIR/`date +%s`"
 		if [ ! -f $RESULT ]; then
-			server $OPTIONS 1>$RESULT 2>&1
+			run_server $OPTIONS 1>$RESULT 2>&1
 		fi
 		sleep 5
 	done
@@ -75,7 +79,7 @@ match() {
 generate_html() {
     sleep 10
     while [ 1 ]; do
-        if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then #test running
+        if [ `server_count` -gt 0 ]; then #test running
             touch $HTML
             chmod 777 $HTML
             ./result.sh --html >$HTML
@@ -83,7 +87,7 @@ generate_html() {
             echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
         else
             sleep 20
-            if [ `ps -o pid= -C rcssserver | wc -l`-eq 0 ]; then #test end
+            if [ `server_count`-eq 0 ]; then #test end
                 break;
             fi
         fi
@@ -94,7 +98,7 @@ generate_html() {
 autotest() {
     export LANG="POSIX"
 
-    if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then
+    if [ `server_count` -gt 0 ]; then
         echo "Error: other server running, exit"
         exit
     fi
