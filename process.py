@@ -75,6 +75,34 @@ def discuz(line):
 
     return string
 
+def html(line):
+    string = ""
+    line.face = Face.MONOSPACE
+
+    if line.color == Color.RED:
+        string += "<strong><font color=Red>"
+    elif line.color == Color.ORANGE:
+        string += "<strong><font color=Orange>"
+    elif line.color == Color.GREEN:
+        string += "<strong><font color=Green>"
+    elif line.color == Color.BLUE:
+        string += "<strong><font color=Blue>"
+    elif line.color == Color.PURPLE:
+        string += "<strong><font color=Purple>"
+
+    if line.face == Face.MONOSPACE:
+        string += "<font face=Monospace>"
+
+    string += line.string.replace(" ", "&nbsp;")
+
+    if line.face != Face.NORMAL:
+        string += "</font>"
+    
+    if line.color != Color.NONE:
+        string += "</font></strong>"
+
+    return string + "<br />"
+
 class GameData:
     def __init__(self):
         self.count = 0
@@ -125,7 +153,7 @@ class GameData:
         self.left_points += left_points
         self.right_points += right_points
 
-        line = Context.Line("%d\t%d:%d\t%d:%d" % (index, left_score, right_score, left_points, right_points))
+        line = Context.Line("%3d%6d:%d%6d:%d" % (index, left_score, right_score, left_points, right_points))
         if valid:
             sub = abs(left_score - right_score)
             if sub >= self.max_sub:
@@ -209,12 +237,14 @@ class GameData:
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
     def generate_context(self):
-        self.add_line("No.\tScore\tPoint")
-
-        index = 0
+        index = -1
         non_valid = 0
         for line in sys.stdin:
             index += 1
+            if index <= 0:
+                self.add_line(line, color=Color.BLUE) #title
+                self.add_line("No.\tScore\tPoint") #head
+                continue
             parts = line.split()
             for i in range(len(parts)):
                 parts[i] = int(parts[i])
@@ -240,12 +270,23 @@ class GameData:
 usage = "Usage: %prog [options]"
 
 parser = OptionParser(usage=usage)
-parser.add_option("-C", "--console", action="store_true", dest="console", default=True, help="print to console [default]")
-parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print to stdout using discuz code")
+parser.add_option("-C", "--console", action="store_true", dest="console", default=True, help="print console format [default]")
+parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print as discuz code format")
+parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
 
 (options, args) = parser.parse_args()
 
-if options.discuz:
+if options.html:
+    print "<head> "
+    print '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
+    print "<title>Test Results</title> "
+    print "</head>"
+    print "<body>"
+    print "<h1>Test Results</h1>"
+    print "<hr>"
+    GameData().run(html)
+    print "</body>"
+elif options.discuz:
     GameData().run(discuz)
 else:
     GameData().run(console)

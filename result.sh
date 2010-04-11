@@ -22,11 +22,16 @@ SPINNER_PID=$!
 
 RESULT=`mktemp`
 RESULT_LIST=`ls -1 | grep '[0-9]\+' | sort -n`
-cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >>$RESULT
+#cat `echo $RESULT_LIST | awk '{print $1}'` | grep '\<vs\>' | sed -e 's/\t//g' >>$RESULT
 echo >>$RESULT
 
 parseall() {
+    local TITLE="N/A"
     for i in $RESULT_LIST; do
+        if [ "$TITLE" = "N/A" ]; then
+            TITLE=`cat $i | grep '\<vs\>' | sed -e 's/\t//g'`
+            echo $TITLE
+        fi
         cat $i | awk -f $PARSE
     done
 }
