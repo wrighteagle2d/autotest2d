@@ -128,6 +128,9 @@ class GameData:
     def add_line(self, string, color=Color.PURPLE, face=Face.NORMAL):
         self.context.add_line(Context.Line(string, color, face))
 
+    def add_newline(self):
+        self.context.add_line(Context.Line(""))
+
     def update(self, index, left_score, right_score, valid):
         self.count += 1
 
@@ -208,15 +211,17 @@ class GameData:
         for line in self.gen_score_map(self.left_score_map) :
             self.context.add_line(line)
 
-        self.add_line("\nRight Team Goals Distribution:")
+        self.add_newline()
+        self.add_line("Right Team Goals Distribution:")
         for line in self.gen_score_map(self.right_score_map) :
             self.context.add_line(line)
 
-        self.add_line("\nDiff Goals Distribution:")
+        self.add_newline()
+        self.add_line("Diff Goals Distribution:")
         for line in self.gen_score_map(self.diff_score_map) :
             self.context.add_line(line)
 
-        self.add_line("\n")
+        self.add_newline()
         self.add_line("Game Count: %d" % (self.count))
 
         self.add_line("Goals: %d : %d (diff: %d)" % (self.left_goals, self.right_goals, self.left_goals - self.right_goals))
@@ -243,7 +248,8 @@ class GameData:
             index += 1
             if index <= 0:
                 self.add_line(line, color=Color.BLUE) #title
-                self.add_line("No.\tScore\tPoint") #head
+                self.add_newline()
+                self.add_line(" No.    Score   Point") #head
                 continue
             parts = line.split()
             for i in range(len(parts)):
@@ -254,7 +260,7 @@ class GameData:
             if not valid:
                 non_valid += 1
 
-        self.add_line("\n")
+        self.add_newline()
         if self.count <= 0:
             self.add_line("No results found, exit")
         else:
