@@ -30,12 +30,21 @@ echo >>$RESULT
 
 parseall() {
     local TITLE="N/A"
+    local CACHE_DIR="cache"
+
+    mkdir $CACHE_DIR 2>/dev/null
     for i in $RESULT_LIST; do
         if [ "$TITLE" = "N/A" ]; then
             TITLE=`cat $i | grep '\<vs\>' | sed -e 's/\t//g'`
-            echo $TITLE
+            if [ ! -f $CACHE_DIR/title ]; then
+                echo $TITLE >$CACHE_DIR/title
+            fi
+            cat $CACHE_DIR/title
         fi
-        cat $i | awk -f $PARSE
+        if [ ! -f $CACHE_DIR/$i ]; then
+            cat $i | awk -f $PARSE >$CACHE_DIR/$i
+        fi
+        cat $CACHE_DIR/$i
     done
 }
 
