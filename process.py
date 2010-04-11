@@ -241,10 +241,10 @@ class GameData:
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
-    def generate_context(self):
+    def generate_context(self, lines):
         index = -1
         non_valid = 0
-        for line in sys.stdin:
+        for line in lines:
             index += 1
             if index <= 0:
                 self.add_line(line, color=Color.BLUE) #title
@@ -269,8 +269,8 @@ class GameData:
         if non_valid:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
 
-    def run(self, method):
-        self.generate_context()
+    def run(self, lines, method):
+        self.generate_context(lines)
         self.context.dump(method)
 
 usage = "Usage: %prog [options]"
@@ -282,6 +282,16 @@ parser.add_option("-H", "--html", action="store_true", dest="html", default=Fals
 
 (options, args) = parser.parse_args()
 
+lines = []
+for line in sys.stdin:
+    lines.append(line.rstrip())
+
+if options.console:
+    GameData().run(lines, console)
+
+if options.discuz:
+    GameData().run(lines, discuz)
+
 if options.html:
     print "<head> "
     print '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
@@ -290,9 +300,6 @@ if options.html:
     print "<body>"
     print "<h1>Test Results</h1>"
     print "<hr>"
-    GameData().run(html)
+    GameData().run(lines, html)
     print "</body>"
-elif options.discuz:
-    GameData().run(discuz)
-else:
-    GameData().run(console)
+
