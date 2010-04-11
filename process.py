@@ -286,13 +286,9 @@ lines = []
 for line in sys.stdin:
     lines.append(line.rstrip())
 
-if options.console:
-    GameData().run(lines, console)
-
 if options.discuz:
     GameData().run(lines, discuz)
-
-if options.html:
+elif options.html:
     print "<head> "
     print '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
     print "<title>Test Results</title> "
@@ -302,4 +298,6 @@ if options.html:
     print "<hr>"
     GameData().run(lines, html)
     print "</body>"
+elif options.console:
+    GameData().run(lines, console)
 
