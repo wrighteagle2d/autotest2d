@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=1              #同时比赛的server个数
+PROCES=3              #同时比赛的server个数
 ROUNDS=100            #每个测试过程的比赛场数
 CONTINUE="false"      #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"  #是否记录rcg
@@ -75,7 +75,7 @@ match() {
 generate_html() {
     sleep 10
     while [ 1 ]; do
-        if [ `pidof rcssserver | wc -l` -gt 0 ]; then #test running
+        if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then #test running
             touch $HTML
             chmod 777 $HTML
             ./result.sh --html >$HTML
@@ -83,7 +83,7 @@ generate_html() {
             echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
         else
             sleep 20
-            if [ `pidof rcssserver | wc -l` -eq 0 ]; then #test end
+            if [ `ps -o pid= -C rcssserver | wc -l`-eq 0 ]; then #test end
                 break;
             fi
         fi
@@ -94,7 +94,7 @@ generate_html() {
 autotest() {
     export LANG="POSIX"
 
-    if [ `pidof rcssserver | wc -l` -gt 0 ]; then
+    if [ `ps -o pid= -C rcssserver | wc -l` -gt 0 ]; then
         echo "Error: other server running, exit"
         exit
     fi
