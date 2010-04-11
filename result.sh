@@ -17,8 +17,11 @@ spinner() {
     done
 }
 
-spinner &
-SPINNER_PID=$!
+SPINNER_PID=-1
+if [ $# -le 0 ]; then
+    spinner &
+    SPINNER_PID=$!
+fi
 
 RESULT=`mktemp`
 RESULT_LIST=`ls -1 | grep '[0-9]\+' | sort -n`
@@ -38,8 +41,10 @@ parseall() {
 
 parseall | python $PROCESS $* >>$RESULT
 
-exec 2>/dev/null
-kill $SPINNER_PID
+if [ $SPINNER_PID -gt 0 ]; then
+    exec 2>/dev/null
+    kill $SPINNER_PID
+fi
 
 cat $RESULT
 rm -f $RESULT

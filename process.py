@@ -300,4 +300,3 @@ elif options.html:
     print "</body>"
 elif options.console:
     GameData().run(lines, console)
-
