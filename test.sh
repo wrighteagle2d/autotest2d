@@ -28,9 +28,9 @@ killall_server() {
 }
 
 support_host_option() {
-	SUPPORT_HOST_OPTION="false"
+	local SUPPORT_HOST_OPTION="false"
+    local OPTIONS="-server::host=\"127.0.0.1\""
 
-    OPTIONS="-server::host=\"127.0.0.1\""
 	OPTIONS="$OPTIONS -server::game_logging=false -server::text_logging=false"
 
     killall_server 1>/dev/null 2>&1
@@ -45,12 +45,11 @@ support_host_option() {
 }
 
 match() {
-    SERVER_HOST=$1
-	USE_HOST=$2
+    local SERVER_HOST=$1
+	local USE_HOST=$2
+	local OPTIONS=""
+	local LOGDIR="log_$SERVER_HOST"
 
-	LOGDIR="log_$SERVER_HOST"
-
-	OPTIONS=""
 	OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\""
 	OPTIONS="$OPTIONS -server::text_log_dir=\"./$LOGDIR/\""
 	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $SERVER_HOST\""
