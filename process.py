@@ -202,11 +202,18 @@ class GameData:
 
     def do_some_calc(self):
         left_count = -1
-        with open("total_rounds", "r") as f:
-            left_count = int(f.read().strip()) - self.count
+
+        try:
+            with open("total_rounds", "r") as f:
+                left_count = int(f.read().strip()) - self.count
+        except IOError:
+            pass
 
         if self.count <= 0:
-            self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
+            if left_count > 0:
+                self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
+            else:
+                self.add_line("Game Count: %d" % (self.count))
             return
 
         game_count = float(self.count)
@@ -223,7 +230,10 @@ class GameData:
         map(lambda line: self.context.add_line(line), self.gen_score_map(self.diff_score_map))
 
         self.add_newline()
-        self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
+        if left_count > 0:
+            self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
+        else:
+            self.add_line("Game Count: %d" % (self.count))
 
         self.add_line("Goals: %d : %d (diff: %d)" % (self.left_goals, self.right_goals, self.left_goals - self.right_goals))
         self.add_line("Points: %d : %d (diff: %d)" % (self.left_points, self.right_points, self.left_points - self.right_points))
@@ -243,7 +253,7 @@ class GameData:
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
         if left_count > 0:
-            max_win_rate = (self.win_count + left_count) / game_count
+            max_win_rate = (self.win_count + left_count) / (game_count + left_count)
             min_win_rate = self.win_count / (game_count + left_count)
             self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (max_win_rate * 100, min_win_rate * 100))
 
