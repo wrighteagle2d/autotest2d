@@ -295,8 +295,8 @@ class GameData:
 usage = "Usage: %prog [options]"
 
 parser = OptionParser(usage=usage)
-parser.add_option("-C", "--console", action="store_true", dest="console", default=True, help="print console format [default]")
-parser.add_option("-N", "--no-color", action="store_true", dest="no_color", default=False, help="print no-color console format")
+parser.add_option("-C", "--console", action="store_true", dest="console", default=True, help="print with color to console [default]")
+parser.add_option("-N", "--no-color", action="store_true", dest="no_color", default=False, help="print without color to console")
 parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print as discuz code format")
 parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
 
@@ -322,5 +322,5 @@ elif options.html:
     print "</body>"
 elif options.no_color:
     GameData().run(lines, no_color)
-elif options.console:
+else:
     GameData().run(lines, console)
