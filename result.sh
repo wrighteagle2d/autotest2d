@@ -44,7 +44,7 @@ parseall() {
             fi
         fi
         if [ ! -f $CACHE_DIR/$i ]; then
-            OUTPUT=`cat $i | awk -f $PARSE`
+            local OUTPUT=`cat $i | awk -f $PARSE`
             if [ ! -z "$OUTPUT" ]; then
                 echo "$OUTPUT" >>$CACHE_FILE
                 touch $CACHE_DIR/$i
