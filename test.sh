@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=3              #同时比赛的server个数
+PROCES=1              #同时比赛的server个数
 ROUNDS=100            #每个测试过程的比赛场数
 CONTINUE="false"      #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"  #是否记录rcg
@@ -124,7 +124,7 @@ autotest() {
 			echo "Error: can not find previous test result"
             exit
         fi
-        PRE_TOTAL_ROUNDS=`./result.sh | awk '{print $3}' | grep '[013]:[013]' | wc -l`
+        PRE_TOTAL_ROUNDS=`./result.sh --no-color | awk '{print $3}' | grep '[013]:[013]' | wc -l`
         TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS + $PRE_TOTAL_ROUNDS`
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
         echo `date` >>$TIME_STAMP_FILE
