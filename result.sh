@@ -44,8 +44,9 @@ parseall() {
             fi
         fi
         if [ ! -f $CACHE_DIR/$i ]; then
-            cat $i | awk -f $PARSE >>$CACHE_FILE
-            if [ `cat $i | grep 'Saving Results Complete' | wc -l` -gt 0 ]; then
+            OUTPUT=`cat $i | awk -f $PARSE`
+            if [ ! -z "$OUTPUT" ]; then
+                echo "$OUTPUT" >>$CACHE_FILE
                 touch $CACHE_DIR/$i
             fi
         fi
