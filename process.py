@@ -201,8 +201,12 @@ class GameData:
         return lines
 
     def do_some_calc(self):
+        left_count = -1
+        with open("total_rounds", "r") as f:
+            left_count = int(f.read().strip()) - self.count
+
         if self.count <= 0:
-            self.add_line("Game Count: %d" % (self.count))
+            self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
             return
 
         game_count = float(self.count)
@@ -219,7 +223,7 @@ class GameData:
         map(lambda line: self.context.add_line(line), self.gen_score_map(self.diff_score_map))
 
         self.add_newline()
-        self.add_line("Game Count: %d" % (self.count))
+        self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
 
         self.add_line("Goals: %d : %d (diff: %d)" % (self.left_goals, self.right_goals, self.left_goals - self.right_goals))
         self.add_line("Points: %d : %d (diff: %d)" % (self.left_points, self.right_points, self.left_points - self.right_points))
