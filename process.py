@@ -208,18 +208,15 @@ class GameData:
         game_count = float(self.count)
 
         self.add_line("Left Team Goals Distribution:")
-        for line in self.gen_score_map(self.left_score_map) :
-            self.context.add_line(line)
+        map(lambda line: self.context.add_line(line), self.gen_score_map(self.left_score_map))
 
         self.add_newline()
         self.add_line("Right Team Goals Distribution:")
-        for line in self.gen_score_map(self.right_score_map) :
-            self.context.add_line(line)
+        map(lambda line: self.context.add_line(line), self.gen_score_map(self.right_score_map))
 
         self.add_newline()
         self.add_line("Diff Goals Distribution:")
-        for line in self.gen_score_map(self.diff_score_map) :
-            self.context.add_line(line)
+        map(lambda line: self.context.add_line(line), self.gen_score_map(self.diff_score_map))
 
         self.add_newline()
         self.add_line("Game Count: %d" % (self.count))
