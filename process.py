@@ -242,6 +242,11 @@ class GameData:
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
+        if left_count > 0:
+            max_win_rate = (self.win_count + left_count) / game_count
+            min_win_rate = self.win_count / (game_count + left_count)
+            self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (max_win_rate * 100, min_win_rate * 100))
+
     def generate_context(self, lines):
         index = -1
         non_valid = 0
