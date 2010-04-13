@@ -349,7 +349,7 @@ for line in sys.stdin:
     if len(line) > 0:
         lines.append(line)
 
-if len(lines) <= 1: #at least two lines: titla + result
+if len(lines) <= 1: #at least two lines: title + result
     print "No results found, exit"
     sys.exit(1)
 
