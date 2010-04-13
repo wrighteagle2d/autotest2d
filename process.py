@@ -4,7 +4,7 @@ import sys
 from optparse import OptionParser
 
 class Color:
-    (NONE, RED, ORANGE, GREEN, BLUE, PURPLE) = range(6)
+    (NONE, RED, ORANGE, GREEN, BLUE, PURPLE, GRAY) = range(7)
 
 class Face:
     (NORMAL, MONOSPACE) = range(2)
@@ -40,6 +40,8 @@ def console(line):
         string += "\033[01;34m"
     elif line.color == Color.PURPLE:
         string += "\033[01;35m"
+    elif line.color == Color.GRAY:
+        string += "\033[01;30m"
 
     string += line.string
 
@@ -64,6 +66,8 @@ def discuz(line):
         string += "[color=Blue]"
     elif line.color == Color.PURPLE:
         string += "[color=Purple]"
+    elif line.color == Color.GRAY:
+        string += "[color=Gray]"
 
     if line.face == Face.MONOSPACE:
         string += "[font=Monospace]"
@@ -92,6 +96,8 @@ def html(line):
         string += "<font color=Blue>"
     elif line.color == Color.PURPLE:
         string += "<font color=Purple>"
+    elif line.color == Color.GRAY:
+        string += "<font color=Gray>"
 
     if line.face == Face.MONOSPACE:
         string += "<font face=Monospace>"
@@ -264,7 +270,7 @@ class GameData:
         if left_count > 0:
             max_win_rate = (self.win_count + left_count) / (game_count + left_count)
             min_win_rate = self.win_count / (game_count + left_count)
-            self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (max_win_rate * 100, min_win_rate * 100))
+            self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (max_win_rate * 100, min_win_rate * 100), Color.GRAY)
 
     def generate_context(self, lines):
         index = -1
