@@ -116,7 +116,8 @@ class GameData:
     def __init__(self, verbose):
         self.count = 0
 
-        self.max_sub = 0
+        self.attention = 5
+        self.max_sub = self.attention
 
         self.left_goals = 0
         self.right_goals = 0
@@ -172,7 +173,7 @@ class GameData:
             if sub >= self.max_sub:
                 self.max_sub = sub
                 line.color = Color.ORANGE
-            elif sub >= 5:
+            elif sub >= self.attention:
                 line.color = Color.GREEN
         else:
             line.color = Color.RED
