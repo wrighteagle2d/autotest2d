@@ -128,7 +128,7 @@ class GameData:
 
         self.left_count = -1
 
-        self.attention = 5
+        self.attention = 4.5
 
         self.left_goals = 0
         self.right_goals = 0
@@ -255,7 +255,6 @@ class GameData:
     def do_some_formatting(self):
         self.add_line(self.title, color=Color.BLUE) #title
         self.add_newline()
-        self.add_line(" No.    Score   Point") #head
 
         left_attention = self.avg_left_goals - self.avg_right_goals - self.attention
         right_attention = self.avg_left_goals - self.avg_right_goals + self.attention
