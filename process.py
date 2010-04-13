@@ -128,7 +128,7 @@ class GameData:
 
         self.left_count = -1
 
-        self.attention = 4.5
+        self.attention = 4.0
 
         self.left_goals = 0
         self.right_goals = 0
