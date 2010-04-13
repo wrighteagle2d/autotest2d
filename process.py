@@ -290,10 +290,9 @@ class GameData:
 
             (left_score, right_score, valid) = parts
 
-            if self.verbose:
-                self.context.add_line(self.update(index, left_score, right_score, valid))
-            else:
-                self.update(index, left_score, right_score, valid)
+            single_line = self.update(index, left_score, right_score, valid)
+            if self.verbose or single_line.color != Color.NONE:
+                self.context.add_line(single_line)
 
             if not valid:
                 non_valid += 1
