@@ -12,6 +12,7 @@ RESULT_DIR="result.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
 TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
 HTML="/tmp/result.html"
+HTML_GENERATING_FILE="/tmp/autotest_html_generating"
 
 run_server() {
 	ulimit -t 180
@@ -66,40 +67,28 @@ match() {
         mkdir $LOGDIR
     fi
 
+    rm -f $HTML_GENERATING_FILE
+    generate_html
+
 	for i in `seq 1 $ROUNDS`; do
-        RESULT="$RESULT_DIR/`date +%s`"
+        local RESULT="$RESULT_DIR/`date +%s`"
 		if [ ! -f $RESULT ]; then
 			run_server $OPTIONS 1>$RESULT 2>&1
 		fi
+        generate_html
 		sleep 5
 	done
 }
 
 generate_html() {
-    local BREAK="false"
-
-    sleep 10
-    while [ 1 ]; do
-        touch $HTML
-        chmod 777 $HTML
+    if [ ! -f $HTML_GENERATING_FILE ]; then
+        touch $HTML $HTML_GENERATING_FILE
+        chmod 777 $HTML $HTML_GENERATING_FILE #allow others to delete or overwrite
         ./result.sh --html >$HTML
         echo -e "<hr>" >>$HTML
         echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
-
-        if [ $BREAK = "true" ]; then
-            break
-        fi
-
-        if [ `server_count` -eq 0 ]; then
-            sleep 20
-            if [ `server_count`-eq 0 ]; then
-                BREAK="true"
-                continue
-            fi
-        fi
-
-        sleep 900
-    done
+        rm -f $HTML_GENERATING_FILE
+    fi
 }
 
 autotest() {
@@ -147,8 +136,6 @@ autotest() {
 	else
 		match localhost false &
 	fi
-
-    generate_html
 }
 
 if [ $# -gt 0 ]; then
