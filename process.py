@@ -224,7 +224,7 @@ class GameData:
 
         return lines
 
-    def do_some_calc(self):
+    def do_some_calculating(self):
         game_count = float(self.count)
 
         try:
@@ -253,7 +253,7 @@ class GameData:
             self.min_win_rate = self.win_count / (game_count + self.left_count)
 
     def do_some_formatting(self):
-        self.add_line(self.title, color=Color.BLUE) #title
+        self.add_line(self.title, color=Color.BLUE)
         self.add_newline()
 
         left_attention = self.avg_left_goals - self.avg_right_goals - self.attention
@@ -267,14 +267,12 @@ class GameData:
             if result.valid:
                 diff = result.left_score - result.right_score
                 if diff <= min_diff:
-                    min = diff
+                    min_diff = diff
                     line.color = Color.ORANGE
                 elif diff >= max_diff:
                     max_diff = diff
                     line.color = Color.ORANGE
-                elif diff <= left_attention:
-                    line.color = Color.GREEN
-                elif diff >= right_attention:
+                elif diff <= left_attention or diff >= right_attention:
                     line.color = Color.GREEN
             else:
                 non_valid += 1
@@ -315,8 +313,7 @@ class GameData:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
 
     def generate_context(self, lines):
-        self.title = lines[0].strip() 
-        lines.pop(0)
+        self.title = lines.pop(0)
 
         for line in lines:
             parts = line.split()
@@ -325,7 +322,7 @@ class GameData:
             (left_score, right_score, valid) = parts
             self.update(left_score, right_score, valid)
 
-        self.do_some_calc()
+        self.do_some_calculating()
         self.do_some_formatting()
 
     def run(self, lines, method):
@@ -345,7 +342,7 @@ parser.add_option("-S", "--simplify", action="store_true", dest="simplify", defa
 
 lines = []
 for line in sys.stdin:
-    line = line.rstrip()
+    line = line.strip()
     if len(line) > 0:
         lines.append(line)
 
