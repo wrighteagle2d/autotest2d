@@ -82,7 +82,7 @@ generate_html() {
     while [ 1 ]; do
         touch $HTML
         chmod 777 $HTML
-        ./result.sh --html >$HTML
+        ./result.sh --verbose --html >$HTML
         echo -e "<hr>" >>$HTML
         echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
 
@@ -124,7 +124,7 @@ autotest() {
 			echo "Error: can not find previous test result"
             exit
         fi
-        PRE_TOTAL_ROUNDS=`./result.sh --no-color | awk '{print $3}' | grep '[013]:[013]' | wc -l`
+        PRE_TOTAL_ROUNDS=`./result.sh --verbose --no-color | awk '{print $3}' | grep '[013]:[013]' | wc -l`
         TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS + $PRE_TOTAL_ROUNDS`
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
         echo `date` >>$TIME_STAMP_FILE
