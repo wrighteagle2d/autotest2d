@@ -259,7 +259,7 @@ class GameData:
 
         win_rate = self.win_count / game_count
         lost_rate = self.lost_count / game_count
-        expected_win_rate = 0.5
+        expected_win_rate = 1.0
         try:
             expected_win_rate = win_rate / (win_rate + lost_rate)
         except:
