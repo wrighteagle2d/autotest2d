@@ -113,7 +113,7 @@ def html(line):
     return string + "<br />"
 
 class GameData:
-    def __init__(self):
+    def __init__(self, verbose):
         self.count = 0
 
         self.max_sub = 0
@@ -132,6 +132,7 @@ class GameData:
         self.right_score_map = {}
         self.diff_score_map = {}
 
+        self.verbose = verbose
         self.context = Context()
 
     def add_line(self, string, color=Color.PURPLE, face=Face.NORMAL):
@@ -279,15 +280,21 @@ class GameData:
             index += 1
             if index <= 0:
                 self.add_line(line, color=Color.BLUE) #title
-                self.add_newline()
-                self.add_line(" No.    Score   Point") #head
+                if self.verbose:
+                    self.add_newline()
+                    self.add_line(" No.    Score   Point") #head
                 continue
             parts = line.split()
             for i in range(len(parts)):
                 parts[i] = int(parts[i])
 
             (left_score, right_score, valid) = parts
-            self.context.add_line(self.update(index, left_score, right_score, valid))
+
+            if self.verbose:
+                self.context.add_line(self.update(index, left_score, right_score, valid))
+            else:
+                self.update(index, left_score, right_score, valid)
+
             if not valid:
                 non_valid += 1
 
@@ -311,6 +318,7 @@ parser.add_option("-C", "--console", action="store_true", dest="console", defaul
 parser.add_option("-N", "--no-color", action="store_true", dest="no_color", default=False, help="print without color to console")
 parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print as discuz code format")
 parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
+parser.add_option("-V", "--verbose", action="store_true", dest="verbose", default=False, help="output verbosely")
 
 (options, args) = parser.parse_args()
 
@@ -320,8 +328,10 @@ for line in sys.stdin:
     if len(line) > 0:
         lines.append(line)
 
+game_data = GameData(options.verbose)
+
 if options.discuz:
-    GameData().run(lines, discuz)
+    game_data.run(lines, discuz)
 elif options.html:
     print "<head> "
     print '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
@@ -330,9 +340,10 @@ elif options.html:
     print "<body>"
     print "<h1>Test Results</h1>"
     print "<hr>"
-    GameData().run(lines, html)
+    game_data.run(lines, html)
     print "</body>"
 elif options.no_color:
-    GameData().run(lines, no_color)
+    game_data.run(lines, no_color)
 else:
-    GameData().run(lines, console)
+    game_data.run(lines, console)
+
