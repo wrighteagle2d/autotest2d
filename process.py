@@ -318,7 +318,7 @@ parser.add_option("-C", "--console", action="store_true", dest="console", defaul
 parser.add_option("-N", "--no-color", action="store_true", dest="no_color", default=False, help="print without color to console")
 parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print as discuz code format")
 parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
-parser.add_option("-V", "--verbose", action="store_true", dest="verbose", default=False, help="output verbosely")
+parser.add_option("-S", "--simplify", action="store_true", dest="simplify", default=False, help="output simplify")
 
 (options, args) = parser.parse_args()
 
@@ -328,7 +328,7 @@ for line in sys.stdin:
     if len(line) > 0:
         lines.append(line)
 
-game_data = GameData(options.verbose)
+game_data = GameData(not options.simplify)
 
 if options.discuz:
     game_data.run(lines, discuz)
