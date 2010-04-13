@@ -280,9 +280,8 @@ class GameData:
             index += 1
             if index <= 0:
                 self.add_line(line, color=Color.BLUE) #title
-                if self.verbose:
-                    self.add_newline()
-                    self.add_line(" No.    Score   Point") #head
+                self.add_newline()
+                self.add_line(" No.    Score   Point") #head
                 continue
             parts = line.split()
             for i in range(len(parts)):
