@@ -113,11 +113,22 @@ def html(line):
     return string + "<br />"
 
 class GameData:
+    class Result:
+        def __init__(self, index, left_score, right_score, left_points, right_points, valid):
+            self.index = index
+            self.left_score = left_score
+            self.right_score = right_score
+            self.left_points = left_points
+            self.right_points = right_points
+            self.valid = valid
+
     def __init__(self, verbose):
         self.count = 0
+        self.result_list = []
+
+        self.left_count = -1
 
         self.attention = 5
-        self.max_sub = self.attention
 
         self.left_goals = 0
         self.right_goals = 0
@@ -136,13 +147,26 @@ class GameData:
         self.verbose = verbose
         self.context = Context()
 
+        self.avg_left_goals = 0.0
+        self.avg_right_goals = 0.0
+
+        self.avg_left_points = 0.0
+        self.avg_right_points = 0.0
+
+        self.win_rate = 0.0
+        self.lost_rate = 0.0
+        self.expected_win_rate = 1.0
+
+        self.max_win_rate = 1.0
+        self.min_win_rate = 0.0
+
     def add_line(self, string, color=Color.PURPLE, face=Face.NORMAL):
         self.context.add_line(Context.Line(string, color, face))
 
     def add_newline(self):
         self.context.add_line(Context.Line(""))
 
-    def update(self, index, left_score, right_score, valid):
+    def update(self, left_score, right_score, valid):
         self.count += 1
 
         self.left_score_map[left_score] = self.left_score_map.get(left_score, 0) + 1
@@ -162,23 +186,12 @@ class GameData:
             right_points += 1
             self.draw_count += 1
 
+        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, valid))
+
         self.left_goals += left_score
         self.right_goals += right_score
         self.left_points += left_points
         self.right_points += right_points
-
-        line = Context.Line("%3d%6d:%d%6d:%d" % (index, left_score, right_score, left_points, right_points))
-        if valid:
-            sub = abs(left_score - right_score)
-            if sub >= self.max_sub:
-                self.max_sub = sub
-                line.color = Color.ORANGE
-            elif sub >= self.attention:
-                line.color = Color.GREEN
-        else:
-            line.color = Color.RED
-
-        return line
 
     def gen_score_map(self, score_map):
         def bar(percentage):
@@ -212,24 +225,66 @@ class GameData:
         return lines
 
     def do_some_calc(self):
-        left_count = -1
+        game_count = float(self.count)
 
         try:
             file = open("total_rounds", "r")
-            left_count = int(file.read().strip()) - self.count
+            self.left_count = int(file.read().strip()) - self.count
             file.close()
         except:
             pass
 
-        if self.count <= 0:
-            if left_count > 0:
-                self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
+        self.avg_left_goals = self.left_goals / game_count
+        self.avg_right_goals = self.right_goals / game_count
+
+        self.avg_left_points = self.left_points / game_count
+        self.avg_right_points = self.right_points / game_count
+
+        self.win_rate = self.win_count / game_count
+        self.lost_rate = self.lost_count / game_count
+
+        try:
+            self.expected_win_rate = self.win_rate / (self.win_rate + self.lost_rate)
+        except:
+            pass
+
+        if self.left_count > 0:
+            self.max_win_rate = (self.win_count + self.left_count) / (game_count + self.left_count)
+            self.min_win_rate = self.win_count / (game_count + self.left_count)
+
+    def do_some_formatting(self):
+        self.add_line(self.title, color=Color.BLUE) #title
+        self.add_newline()
+        self.add_line(" No.    Score   Point") #head
+
+        left_attention = self.avg_left_goals - self.avg_right_goals - self.attention
+        right_attention = self.avg_left_goals - self.avg_right_goals + self.attention
+        min_diff = left_attention
+        max_diff = right_attention
+        non_valid = 0
+
+        for result in self.result_list:
+            line = Context.Line("%3d%6d:%d%6d:%d" % (result.index, result.left_score, result.right_score, result.left_points, result.right_points))
+            if result.valid:
+                diff = result.left_score - result.right_score
+                if diff <= min_diff:
+                    min = diff
+                    line.color = Color.ORANGE
+                elif diff >= max_diff:
+                    max_diff = diff
+                    line.color = Color.ORANGE
+                elif diff <= left_attention:
+                    line.color = Color.GREEN
+                elif diff >= right_attention:
+                    line.color = Color.GREEN
             else:
-                self.add_line("Game Count: %d" % (self.count))
-            return
+                non_valid += 1
+                line.color = Color.RED
 
-        game_count = float(self.count)
+            if self.verbose or line.color != Color.NONE:
+                self.context.add_line(line)
 
+        self.add_newline()
         self.add_line("Left Team Goals Distribution:")
         map(lambda line: self.context.add_line(line), self.gen_score_map(self.left_score_map))
 
@@ -242,69 +297,37 @@ class GameData:
         map(lambda line: self.context.add_line(line), self.gen_score_map(self.diff_score_map))
 
         self.add_newline()
-        if left_count > 0:
-            self.add_line("Game Count: %d (%d left)" % (self.count, left_count))
+        if self.left_count > 0:
+            self.add_line("Game Count: %d (%d left)" % (self.count, self.left_count))
         else:
             self.add_line("Game Count: %d" % (self.count))
 
         self.add_line("Goals: %d : %d (diff: %d)" % (self.left_goals, self.right_goals, self.left_goals - self.right_goals))
         self.add_line("Points: %d : %d (diff: %d)" % (self.left_points, self.right_points, self.left_points - self.right_points))
-
-        avg_left_goals = self.left_goals / game_count
-        avg_right_goals = self.right_goals / game_count
-        self.add_line("Avg Goals: %.2f : %.2f (diff: %.2f)" % (avg_left_goals, avg_right_goals, avg_left_goals - avg_right_goals))
-
-        avg_left_points = self.left_points / game_count
-        avg_right_points = self.right_points / game_count
-        self.add_line("Avg Points: %.2f : %.2f (diff: %.2f)" % (avg_left_points, avg_right_points, avg_left_points - avg_right_points))
-
-        win_rate = self.win_count / game_count
-        lost_rate = self.lost_count / game_count
-        expected_win_rate = 1.0
-        try:
-            expected_win_rate = win_rate / (win_rate + lost_rate)
-        except:
-            pass
+        
+        self.add_line("Avg Goals: %.2f : %.2f (diff: %.2f)" % (self.avg_left_goals, self.avg_right_goals, self.avg_left_goals - self.avg_right_goals))
+        self.add_line("Avg Points: %.2f : %.2f (diff: %.2f)" % (self.avg_left_points, self.avg_right_points, self.avg_left_points - self.avg_right_points))
 
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
-        self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
-
-        if left_count > 0:
-            max_win_rate = (self.win_count + left_count) / (game_count + left_count)
-            min_win_rate = self.win_count / (game_count + left_count)
-            self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (max_win_rate * 100, min_win_rate * 100), Color.GRAY)
-
-    def generate_context(self, lines):
-        index = -1
-        non_valid = 0
-        for line in lines:
-            index += 1
-            if index <= 0:
-                self.add_line(line, color=Color.BLUE) #title
-                self.add_newline()
-                self.add_line(" No.    Score   Point") #head
-                continue
-            parts = line.split()
-            for i in range(len(parts)):
-                parts[i] = int(parts[i])
-
-            (left_score, right_score, valid) = parts
-
-            single_line = self.update(index, left_score, right_score, valid)
-            if self.verbose or single_line.color != Color.NONE:
-                self.context.add_line(single_line)
-
-            if not valid:
-                non_valid += 1
-
-        self.add_newline()
-        if self.count <= 0:
-            self.add_line("No results found, exit")
-        else:
-            self.do_some_calc()
+        self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (self.win_rate * 100, self.expected_win_rate * 100))
+        self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (self.max_win_rate * 100, self.min_win_rate * 100), Color.GRAY)
 
         if non_valid:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
+
+    def generate_context(self, lines):
+        self.title = lines[0].strip() 
+        lines.pop(0)
+
+        for line in lines:
+            parts = line.split()
+            for i in range(len(parts)):
+                parts[i] = int(parts[i])
+            (left_score, right_score, valid) = parts
+            self.update(left_score, right_score, valid)
+
+        self.do_some_calc()
+        self.do_some_formatting()
 
     def run(self, lines, method):
         self.generate_context(lines)
@@ -326,6 +349,10 @@ for line in sys.stdin:
     line = line.rstrip()
     if len(line) > 0:
         lines.append(line)
+
+if len(lines) <= 1: #at least two lines: titla + result
+    print "No results found, exit"
+    sys.exit(1)
 
 game_data = GameData(not options.simplify)
 
