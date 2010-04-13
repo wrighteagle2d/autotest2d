@@ -207,9 +207,10 @@ class GameData:
         left_count = -1
 
         try:
-            with open("total_rounds", "r") as f:
-                left_count = int(f.read().strip()) - self.count
-        except IOError:
+            file = open("total_rounds", "r")
+            left_count = int(file.read().strip()) - self.count
+            file.close()
+        except:
             pass
 
         if self.count <= 0:
