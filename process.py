@@ -252,7 +252,12 @@ class GameData:
 
         win_rate = self.win_count / game_count
         lost_rate = self.lost_count / game_count
-        expected_win_rate = win_rate / (win_rate + lost_rate)
+        expected_win_rate = 0.5
+        try:
+            expected_win_rate = win_rate / (win_rate + lost_rate)
+        except:
+            pass
+
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (win_rate * 100, expected_win_rate * 100))
 
