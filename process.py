@@ -307,7 +307,8 @@ class GameData:
 
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (self.win_rate * 100, self.expected_win_rate * 100))
-        self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (self.max_win_rate * 100, self.min_win_rate * 100), Color.GRAY)
+        if self.left_count > 0:
+            self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (self.max_win_rate * 100, self.min_win_rate * 100), Color.GRAY)
 
         if non_valid:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
