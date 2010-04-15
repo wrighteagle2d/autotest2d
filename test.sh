@@ -83,7 +83,7 @@ match() {
 generate_html() {
     if [ ! -f $HTML_GENERATING_LOCK ]; then
         touch $HTML $HTML_GENERATING_LOCK
-        chmod 777 $HTML $HTML_GENERATING_LOCK #allow others to delete or overwrite
+        chmod 777 $HTML $HTML_GENERATING_LOCK 2>/dev/null #allow others to delete or overwrite
         ./result.sh --html >$HTML
         echo -e "<hr>" >>$HTML
         echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
