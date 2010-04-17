@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=1              #同时比赛的server个数
+PROCES=2              #同时比赛的server个数
 ROUNDS=100            #每个测试过程的比赛场数
 CONTINUE="false"      #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"  #是否记录rcg
@@ -30,9 +30,7 @@ killall_server() {
 
 support_host_option() {
 	local SUPPORT_HOST_OPTION="false"
-    local OPTIONS="-server::host=\"127.0.0.1\""
-
-	OPTIONS="$OPTIONS -server::game_logging=false -server::text_logging=false"
+    local OPTIONS="-server::host=\"127.0.0.1\" -server::game_logging=false -server::text_logging=false"
 
     killall_server 1>/dev/null 2>&1
     run_server $OPTIONS 1>/dev/null 2>&1 &
