@@ -30,7 +30,7 @@ BEGIN {
 }
 
 END {
-    if (player_disconnected_ln > waiting_ln && coach_disconnected_ln > waiting_ln) {
+    if (waiting_ln >= 0 && player_disconnected_ln > waiting_ln && coach_disconnected_ln > waiting_ln) {
         valid = 1
     }
 
