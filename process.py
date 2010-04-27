@@ -163,6 +163,8 @@ class GameData:
         self.min_win_rate = 0.0
 
         self.win_rate_standard_deviation = 0.0
+        self.confidence_intervel_left = 0.0
+        self.confidence_intervel_right = 0.0
 
     def add_line(self, string, color=Color.PURPLE, face=Face.NORMAL):
         self.context.add_line(Context.Line(string, color, face))
@@ -200,8 +202,16 @@ class GameData:
         if self.analyze:
             game_count = float(self.count)
             win_rate = self.win_count / game_count
-            win_rate_standard_deviation = math.sqrt(win_rate - win_rate * win_rate);
-            print self.count, win_rate, 1.0 - win_rate_standard_deviation
+            win_rate_standard_deviation = math.sqrt(win_rate * (1.0  - win_rate));
+            confidence_intervel_left = win_rate - 1.96 * win_rate_standard_deviation / math.sqrt(game_count)
+            confidence_intervel_right = win_rate + 1.96 * win_rate_standard_deviation / math.sqrt(game_count)
+
+            if confidence_intervel_left < 0.0:
+                confidence_intervel_left = 0.0
+            if confidence_intervel_right > 1.0:
+                confidence_intervel_right = 1.0
+
+            print self.count, win_rate, confidence_intervel_left, confidence_intervel_right
 
     def gen_score_map(self, score_map):
         def bar(percentage):
@@ -253,7 +263,9 @@ class GameData:
         self.win_rate = self.win_count / game_count
         self.lost_rate = self.lost_count / game_count
 
-        self.win_rate_standard_deviation = math.sqrt(self.win_rate - self.win_rate * self.win_rate);
+        self.win_rate_standard_deviation = math.sqrt(self.win_rate * (1.0  - self.win_rate));
+        self.confidence_intervel_left = self.win_rate - 1.96 * self.win_rate_standard_deviation / math.sqrt(game_count)
+        self.confidence_intervel_right = self.win_rate + 1.96 * self.win_rate_standard_deviation / math.sqrt(game_count)
 
         try:
             self.expected_win_rate = self.win_rate / (self.win_rate + self.lost_rate)
@@ -319,6 +331,7 @@ class GameData:
 
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (self.win_rate * 100, self.expected_win_rate * 100))
+        self.add_line("Left Team: 95%% Confidence Interval [%.2f%%, %.2f%%]" % (self.confidence_intervel_left * 100, self.confidence_intervel_right * 100))
         self.add_line("Left Team: WinRate Standard Deviation %.4f" % (self.win_rate_standard_deviation))
 
         if self.left_count > 0:
