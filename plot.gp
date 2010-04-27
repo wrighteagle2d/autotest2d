@@ -143,5 +143,5 @@ set loadpath
 set fontpath 
 set fit noerrorvariables
 show grid
-plot 'result.d/plot' u 1:2:3:4 with errorbars lt 0 title "95% confidence interval", 'result.d/plot' u 1:2 with lines title "win rate" lt 1
+plot 'result.d/plot' u 1:2:3:4 with errorbars lt 0 title "95% confidence interval", 'result.d/plot' u 1:2 with lines title "win rate" lt 1 lw 2
 #    EOF

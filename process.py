@@ -201,17 +201,11 @@ class GameData:
 
         if self.analyze:
             game_count = float(self.count)
-            win_rate = self.win_count / game_count
-            win_rate_standard_deviation = math.sqrt(win_rate * (1.0  - win_rate));
-            confidence_intervel_left = win_rate - 1.96 * win_rate_standard_deviation / math.sqrt(game_count)
-            confidence_intervel_right = win_rate + 1.96 * win_rate_standard_deviation / math.sqrt(game_count)
+            self.win_rate = self.win_count / game_count
+            
+            self.calc_confidence_interval()
 
-            if confidence_intervel_left < 0.0:
-                confidence_intervel_left = 0.0
-            if confidence_intervel_right > 1.0:
-                confidence_intervel_right = 1.0
-
-            print self.count, win_rate, confidence_intervel_left, confidence_intervel_right
+            print self.count, self.win_rate, self.confidence_intervel_left, self.confidence_intervel_right
 
     def gen_score_map(self, score_map):
         def bar(percentage):
@@ -244,6 +238,19 @@ class GameData:
 
         return lines
 
+    def calc_confidence_interval(self):
+        game_count = float(self.count)
+
+        self.win_rate_standard_deviation = math.sqrt(self.win_rate * (1.0  - self.win_rate));
+        self.confidence_intervel_left = self.win_rate - 1.96 * self.win_rate_standard_deviation / math.sqrt(game_count)
+        self.confidence_intervel_right = self.win_rate + 1.96 * self.win_rate_standard_deviation / math.sqrt(game_count)
+
+        if self.confidence_intervel_left < 0.0:
+            self.confidence_intervel_left = 0.0
+        if self.confidence_intervel_right > 1.0:
+            self.confidence_intervel_right = 1.0
+
+
     def do_some_calculating(self):
         game_count = float(self.count)
 
@@ -263,9 +270,7 @@ class GameData:
         self.win_rate = self.win_count / game_count
         self.lost_rate = self.lost_count / game_count
 
-        self.win_rate_standard_deviation = math.sqrt(self.win_rate * (1.0  - self.win_rate));
-        self.confidence_intervel_left = self.win_rate - 1.96 * self.win_rate_standard_deviation / math.sqrt(game_count)
-        self.confidence_intervel_right = self.win_rate + 1.96 * self.win_rate_standard_deviation / math.sqrt(game_count)
+        self.calc_confidence_interval()
 
         try:
             self.expected_win_rate = self.win_rate / (self.win_rate + self.lost_rate)
