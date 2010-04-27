@@ -332,7 +332,6 @@ class GameData:
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (self.win_rate * 100, self.expected_win_rate * 100))
         self.add_line("Left Team: 95%% Confidence Interval [%.2f%%, %.2f%%]" % (self.confidence_intervel_left * 100, self.confidence_intervel_right * 100))
-        self.add_line("Left Team: WinRate Standard Deviation %.4f" % (self.win_rate_standard_deviation))
 
         if self.left_count > 0:
             self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (self.max_win_rate * 100, self.min_win_rate * 100), Color.GRAY)
