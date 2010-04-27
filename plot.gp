@@ -15,7 +15,7 @@
 #    	Send bug reports and suggestions to <http://sourceforge.net/projects/gnuplot>
 #    
 set terminal png font '/usr/share/fonts/truetype/ttf-dejavu/DejaVuSansCondensed.ttf,11' size 1280,800
-set output "result.png" 
+set output "result.d/result.png" 
 unset clip points
 set clip one
 unset clip two
@@ -143,5 +143,5 @@ set loadpath
 set fontpath 
 set fit noerrorvariables
 show grid
-plot 'plot' u 1:2 w l title "win rate", 'plot' u 1:3 w l title "expected win rate"
+plot 'result.d/plot' u 1:2 w l title "win rate", 'result.d/plot' u 1:3 w l title "standard deviation"
 #    EOF

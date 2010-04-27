@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import math
 from optparse import OptionParser
 
 class Color:
@@ -122,7 +123,7 @@ class GameData:
             self.right_points = right_points
             self.valid = valid
 
-    def __init__(self, verbose):
+    def __init__(self, verbose, analyze):
         self.count = 0
         self.result_list = []
 
@@ -145,6 +146,7 @@ class GameData:
         self.diff_score_map = {}
 
         self.verbose = verbose
+        self.analyze = analyze
         self.context = Context()
 
         self.avg_left_goals = 0.0
@@ -159,6 +161,8 @@ class GameData:
 
         self.max_win_rate = 1.0
         self.min_win_rate = 0.0
+
+        self.win_rate_standard_deviation = 0.0
 
     def add_line(self, string, color=Color.PURPLE, face=Face.NORMAL):
         self.context.add_line(Context.Line(string, color, face))
@@ -192,6 +196,12 @@ class GameData:
         self.right_goals += right_score
         self.left_points += left_points
         self.right_points += right_points
+
+        if self.analyze:
+            game_count = float(self.count)
+            win_rate = self.win_count / game_count
+            win_rate_standard_deviation = math.sqrt(win_rate - win_rate * win_rate);
+            print self.count, win_rate, win_rate_standard_deviation
 
     def gen_score_map(self, score_map):
         def bar(percentage):
@@ -242,6 +252,8 @@ class GameData:
 
         self.win_rate = self.win_count / game_count
         self.lost_rate = self.lost_count / game_count
+
+        self.win_rate_standard_deviation = math.sqrt(self.win_rate - self.win_rate * self.win_rate);
 
         try:
             self.expected_win_rate = self.win_rate / (self.win_rate + self.lost_rate)
@@ -307,6 +319,8 @@ class GameData:
 
         self.add_line("Left Team: Win %d, Draw %d, Lost %d" % (self.win_count, self.draw_count, self.lost_count))
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (self.win_rate * 100, self.expected_win_rate * 100))
+        self.add_line("Left Team: WinRate Standard Deviation %.4f" % (self.win_rate_standard_deviation))
+
         if self.left_count > 0:
             self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (self.max_win_rate * 100, self.min_win_rate * 100), Color.GRAY)
 
@@ -323,8 +337,9 @@ class GameData:
             (left_score, right_score, valid) = parts
             self.update(left_score, right_score, valid)
 
-        self.do_some_calculating()
-        self.do_some_formatting()
+        if not self.analyze:
+            self.do_some_calculating()
+            self.do_some_formatting()
 
     def run(self, lines, method):
         self.generate_context(lines)
@@ -338,6 +353,7 @@ parser.add_option("-N", "--no-color", action="store_true", dest="no_color", defa
 parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print as discuz code format")
 parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
 parser.add_option("-S", "--simplify", action="store_true", dest="simplify", default=False, help="output simplify")
+parser.add_option("-a", "--analyze", action="store_true", dest="analyze", default=False, help="output simplify")
 
 (options, args) = parser.parse_args()
 
@@ -351,7 +367,7 @@ if len(lines) <= 1: #at least two lines: title + result
     print "No results found, exit"
     sys.exit(1)
 
-game_data = GameData(not options.simplify)
+game_data = GameData(not options.simplify, options.analyze)
 
 if options.discuz:
     game_data.run(lines, discuz)
