@@ -143,5 +143,5 @@ set loadpath
 set fontpath 
 set fit noerrorvariables
 show grid
-plot 'result.d/plot' u 1:2 w l title "win rate", 'result.d/plot' u 1:3 w l title "standard deviation"
+plot 'result.d/plot' u 1:2 w l title "win rate", 'result.d/plot' u 1:3 w l title "1.0 - standard deviation"
 #    EOF

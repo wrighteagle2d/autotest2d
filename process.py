@@ -201,7 +201,7 @@ class GameData:
             game_count = float(self.count)
             win_rate = self.win_count / game_count
             win_rate_standard_deviation = math.sqrt(win_rate - win_rate * win_rate);
-            print self.count, win_rate, win_rate_standard_deviation
+            print self.count, win_rate, 1.0 - win_rate_standard_deviation
 
     def gen_score_map(self, score_map):
         def bar(percentage):
