@@ -1,10 +1,10 @@
 #!/bin/bash
 
-PROCES=2              #同时比赛的server个数
-ROUNDS=100            #每个测试过程的比赛场数
-CONTINUE="false"      #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
-GAME_LOGGING="false"  #是否记录rcg
-TEXT_LOGGING="false"  #是否记录rcl
+PROCES=1               #同时比赛的server个数
+ROUNDS=100             #每个测试过程的比赛场数
+CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
+GAME_LOGGING="false"   #是否记录rcg
+TEXT_LOGGING="false"   #是否记录rcl
 
 ###############
 
@@ -15,7 +15,7 @@ HTML="/tmp/result.html"
 HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {
-	ulimit -t 180
+	ulimit -t 300
 	rcssserver $*
 }
 
