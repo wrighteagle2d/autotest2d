@@ -115,13 +115,14 @@ def html(line):
 
 class GameData:
     class Result:
-        def __init__(self, index, left_score, right_score, left_points, right_points, valid):
+        def __init__(self, index, left_score, right_score, left_points, right_points, valid, miss):
             self.index = index
             self.left_score = left_score
             self.right_score = right_score
             self.left_points = left_points
             self.right_points = right_points
             self.valid = valid
+            self.miss = miss
 
     def __init__(self, verbose, analyze):
         self.count = 0
@@ -172,7 +173,7 @@ class GameData:
     def add_newline(self):
         self.context.add_line(Context.Line(""))
 
-    def update(self, left_score, right_score, valid):
+    def update(self, left_score, right_score, valid, miss):
         self.count += 1
 
         self.left_score_map[left_score] = self.left_score_map.get(left_score, 0) + 1
@@ -192,7 +193,7 @@ class GameData:
             right_points += 1
             self.draw_count += 1
 
-        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, valid))
+        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, valid, miss))
 
         self.left_goals += left_score
         self.right_goals += right_score
@@ -290,6 +291,8 @@ class GameData:
         min_diff = left_attention
         max_diff = right_attention
         non_valid = 0
+        miss_count = 0
+        miss_matches = 0
 
         for result in self.result_list:
             line = Context.Line("%3d%6d:%d%6d:%d" % (result.index, result.left_score, result.right_score, result.left_points, result.right_points))
@@ -306,6 +309,9 @@ class GameData:
             else:
                 non_valid += 1
                 line.color = Color.RED
+            if result.miss:
+                miss_count += result.miss
+                miss_matches += 1
 
             if self.verbose or line.color != Color.NONE:
                 self.context.add_line(line)
@@ -343,6 +349,8 @@ class GameData:
 
         if non_valid:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
+        if miss_count:
+            self.add_line("Total Miss Count: %d (in %d matches)" % (miss_count, miss_matches), Color.RED)
 
     def generate_context(self, lines):
         self.title = lines.pop(0)
@@ -351,8 +359,8 @@ class GameData:
             parts = line.split()
             for i in range(len(parts)):
                 parts[i] = int(parts[i])
-            (left_score, right_score, valid) = parts
-            self.update(left_score, right_score, valid)
+            (left_score, right_score, valid, miss) = parts
+            self.update(left_score, right_score, valid, miss)
 
         if not self.analyze:
             self.do_some_calculating()

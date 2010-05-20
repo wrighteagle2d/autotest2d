@@ -7,6 +7,8 @@ BEGIN {
 
     left_score = -1
     right_score = -1
+
+    miss_count = 0
 }
 
 {
@@ -27,6 +29,9 @@ BEGIN {
         left_score = $2
         right_score = $4
     }
+    else if ($0 ~ /miss a turn_neck/) {
+        miss_count += 1
+    }
 }
 
 END {
@@ -35,7 +40,7 @@ END {
     }
 
     if (left_score >= 0 && right_score >= 0) {
-        print left_score, right_score, valid
+        print left_score, right_score, valid, miss_count
     }
 }
 
