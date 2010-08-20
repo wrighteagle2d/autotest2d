@@ -378,7 +378,7 @@ parser.add_option("-N", "--no-color", action="store_true", dest="no_color", defa
 parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print as discuz code format")
 parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
 parser.add_option("-S", "--simplify", action="store_true", dest="simplify", default=False, help="output simplify")
-parser.add_option("-A", "--analyze", action="store_true", dest="analyze", default=False, help="output simplify")
+parser.add_option("-A", "--analyze", action="store_true", dest="analyze", default=False, help="output curve data")
 
 (options, args) = parser.parse_args()
 
