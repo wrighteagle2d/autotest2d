@@ -1,5 +1,9 @@
 自动比赛脚本
 
 * test.sh -- 开始自动比赛
+* kill.sh -- 强制结束自动比赛
 * result.sh -- 显示比赛结果
 * analyze.sh -- 绘制胜率曲线
+* start_left -- 左边球队启动脚本
+* start_right -- 右边球队启动脚本
+* start.tmpl -- 不同对手启动脚本模板
