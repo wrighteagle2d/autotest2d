@@ -1,4 +1,5 @@
-a set of scripts to auto match,
-test.sh to start a auto test
-result.sh to show the result,
-analyze.sh to plot a goals tendency figure.
+自动比赛脚本
+
+* test.sh -- 开始自动比赛
+* result.sh -- 显示比赛结果
+* analyze.sh -- 绘制胜率曲线
