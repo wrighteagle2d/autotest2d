@@ -2,7 +2,9 @@
 
 RESULT_DIR="result.d"
 DATA="$RESULT_DIR/plot"
-GNUPLOT="./plot.gp"
+GNUPLOT="./scripts/plot.gp"
+
+[ -d $RESULT_DIR ] || exit
 
 echo "#count win_rate expected_win_rate" > $DATA
 ./result.sh --analyze >> $DATA

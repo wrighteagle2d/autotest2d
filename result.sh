@@ -1,8 +1,8 @@
 #!/bin/bash
 
 RESULT_DIR="result.d"
-PARSE="../parse.awk"
-PROCESS="../process.py"
+PARSE="../scripts/parse.awk"
+PROCESS="../scripts/process.py"
 
 cd $RESULT_DIR 2>/dev/null || exit
 
