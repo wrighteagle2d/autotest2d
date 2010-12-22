@@ -350,7 +350,7 @@ class GameData:
         if non_valid:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
         if miss_count:
-            self.add_line("Total Miss Count: %d (in %d matches, %.2f%%)" % (miss_count, miss_matches, miss_matches / float(self.count) * 100)), Color.RED)
+            self.add_line("Total Miss Count: %d (in %d matches, %.2f%%)" % (miss_count, miss_matches, miss_matches / float(self.count) * 100), Color.RED)
 
     def generate_context(self, lines):
         self.title = lines.pop(0)
