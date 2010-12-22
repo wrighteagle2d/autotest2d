@@ -1,7 +1,8 @@
 #!/bin/bash
 
-PROCES=1               #同时比赛的server个数
-ROUNDS=100             #每个测试过程的比赛场数
+PROCES=3               #同时比赛的server个数
+ROUNDS=300             #每个测试过程的比赛场数
+DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
 CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"   #是否记录rcg
 TEXT_LOGGING="false"   #是否记录rcl
@@ -16,7 +17,7 @@ HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {
 	ulimit -t 300
-	rcssserver $*
+    rcssserver $*
 }
 
 server_count() {
@@ -28,38 +29,26 @@ killall_server() {
     killall -9 rcssserver.bin
 }
 
-support_host_option() {
-	local SUPPORT_HOST_OPTION="false"
-    local OPTIONS="-server::host=\"127.0.0.1\" -server::game_logging=false -server::text_logging=false"
-
-    killall_server 1>/dev/null 2>&1
-    run_server $OPTIONS 1>/dev/null 2>&1 &
-    sleep 1
-    if [ `server_count` -gt 0 ]; then
-       SUPPORT_HOST_OPTION="true"
-    fi
-    killall_server 1>/dev/null 2>&1
-
-	echo $SUPPORT_HOST_OPTION
-}
-
 match() {
-    local SERVER_HOST=$1
-	local USE_HOST=$2
-	local OPTIONS=""
-	local LOGDIR="log_$SERVER_HOST"
+    local HOST=$1
+	local PORT=$2
 
+	local OPTIONS=""
+	local LOGDIR="log_$HOST"
+
+    COACH_PORT=`expr $PORT + 1`
+    OLCOACH_PORT=`expr $PORT + 2`
+
+    OPTIONS="$OPTIONS -server::port=$PORT"
+    OPTIONS="$OPTIONS -server::coach_port=$COACH_PORT"
+    OPTIONS="$OPTIONS -server::olcoach_port=$OLCOACH_PORT"
 	OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\""
 	OPTIONS="$OPTIONS -server::text_log_dir=\"./$LOGDIR/\""
-	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $SERVER_HOST\""
-	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $SERVER_HOST\""
+	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
+	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
-
-    if [ $USE_HOST = "true" ]; then
-        OPTIONS="$OPTIONS -server::host=\"$SERVER_HOST\""
-    fi
 
     if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
         mkdir $LOGDIR
@@ -117,23 +106,21 @@ autotest() {
         echo `date` >>$TIME_STAMP_FILE
     fi
 
-	if [ `support_host_option` = "true" ]; then
-		IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
-		SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
+    local IP_PATTERN='192\.168\.[0-9]\{1,3\}\.[0-9]\{1,3\}'
+    local SERVER_HOSTS=(`ifconfig | grep -o "inet addr:$IP_PATTERN" | grep -o "$IP_PATTERN"`)
+    local HOST="localhost"
 
-		if [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
-			i=0
-			while [ $i -lt $PROCES ] && [ $i -lt ${#SERVER_HOSTS[@]} ]; do
-				match ${SERVER_HOSTS[$i]} true &
-				i=`expr $i + 1`
-				sleep 30
-			done
-		else
-			match localhost true &
-		fi
-	else
-		match localhost false &
-	fi
+    if [ ${#SERVER_HOSTS[@]} -gt 0 ]; then
+        HOST=${SERVER_HOSTS[0]}
+    fi
+
+    local i=0
+    while [ $i -lt $PROCES ]; do
+        local PORT=`expr $DEFAULT_PORT + $i \* 1000`
+        match $HOST $PORT &
+        i=`expr $i + 1`
+        sleep 30
+    done
 }
 
 if [ $# -gt 0 ]; then
