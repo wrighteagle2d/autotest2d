@@ -1,3 +1,4 @@
 #!/bin/bash
 
 ssh -f $1 "ulimit -t 180 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3"
+sleep 5
