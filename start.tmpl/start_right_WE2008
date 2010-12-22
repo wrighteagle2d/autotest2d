@@ -1,4 +1,0 @@
-#!/bin/bash
-
-killall WE2008
-cd ../WE2008 && ./startWE2008.sh 1>/dev/null 2>&1 

@@ -1,7 +1,8 @@
 #!/bin/bash
 
-PROCES=3               #同时比赛的server个数
-ROUNDS=300             #每个测试过程的比赛场数
+PROCES=1               #同时比赛的server个数
+ROUNDS=100             #每个测试过程的比赛场数
+CLIENTS=("localhost")  #跑球队的机器ip列表
 DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
 CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"   #是否记录rcg
@@ -36,16 +37,25 @@ match() {
 	local OPTIONS=""
 	local LOGDIR="log_$HOST"
 
-    COACH_PORT=`expr $PORT + 1`
-    OLCOACH_PORT=`expr $PORT + 2`
+    local COACH_PORT=`expr $PORT + 1`
+    local OLCOACH_PORT=`expr $PORT + 2`
+
+    local i=`expr $PORT / 1000`
+    local j=`expr $i + 1`
+
+    i=`expr $i % ${#CLIENTS[@]}`
+    j=`expr $j % ${#CLIENTS[@]}`
+
+    local LEFT_CLIENT=${CLIENTS[$i]}
+    local RIGHT_CLIENT=${CLIENTS[$j]}
 
     OPTIONS="$OPTIONS -server::port=$PORT"
     OPTIONS="$OPTIONS -server::coach_port=$COACH_PORT"
     OPTIONS="$OPTIONS -server::olcoach_port=$OLCOACH_PORT"
 	OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\""
 	OPTIONS="$OPTIONS -server::text_log_dir=\"./$LOGDIR/\""
-	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
-	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
+	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
+	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"

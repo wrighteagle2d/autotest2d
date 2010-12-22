@@ -1,3 +1,0 @@
-#!/bin/bash
-
-ssh 192.168.26.118 "ulimit -t 180 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $1 -p $2"
