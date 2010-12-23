@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=2               #同时比赛的server个数
+PROCES=1               #同时比赛的server个数
 ROUNDS=300             #每个测试过程的比赛场数
 CLIENTS=("192.168.26.102" "192.168.26.118")  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
 DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
@@ -35,22 +35,20 @@ match() {
     local COACH_PORT=`expr $PORT + 1`
     local OLCOACH_PORT=`expr $PORT + 2`
 
-    local i=`expr $PORT / 1000`
-    local j=`expr $i + 1`
+    local a=`expr $PORT / 1000`
+    local b=`expr $b + 1`
 
-    i=`expr $i % ${#CLIENTS[@]}`
-    j=`expr $j % ${#CLIENTS[@]}`
+    a=`expr $a % ${#CLIENTS[@]}`
+    b=`expr $b % ${#CLIENTS[@]}`
 
-    local LEFT_CLIENT=${CLIENTS[$i]}
-    local RIGHT_CLIENT=${CLIENTS[$j]}
+    local LEFT_CLIENT=${CLIENTS[$a]}
+    local RIGHT_CLIENT=${CLIENTS[$b]}
 
     OPTIONS="$OPTIONS -server::port=$PORT"
     OPTIONS="$OPTIONS -server::coach_port=$COACH_PORT"
     OPTIONS="$OPTIONS -server::olcoach_port=$OLCOACH_PORT"
 	OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\""
 	OPTIONS="$OPTIONS -server::text_log_dir=\"./$LOGDIR/\""
-	OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
-	OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
@@ -65,7 +63,14 @@ match() {
 	for i in `seq 1 $ROUNDS`; do
         local RESULT="$RESULT_DIR/`date +%s`"
 		if [ ! -f $RESULT ]; then
-			run_server $OPTIONS &> $RESULT
+            local TMP=$LEFT_CLIENT #swap clients
+            LEFT_CLIENT=$RIGHT_CLIENT
+            RIGHT_CLIENT=$TMP
+
+            local START_LEFT="-server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
+            local START_RIGHT="-server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
+			
+            run_server $OPTIONS $START_LEFT $START_RIGHT &> $RESULT
 		fi
         generate_html
 		sleep 5
