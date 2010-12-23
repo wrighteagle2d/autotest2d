@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#第一个参数是server所在机器ip，第二个参数时同时比赛的场数
+#调用实例：./automonitor 160 2
+
+for i in `seq 1 $2`; do
+    PORT=`expr 5000 + $i \* 1000`
+    rcssmonitor --server-host 192.168.26.$1 --server-port $PORT --auto-reconnect-mode on --auto-reconnect-wait 5 &
+done

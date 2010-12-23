@@ -7,3 +7,4 @@
 * start_left -- 左边球队启动脚本
 * start_right -- 右边球队启动脚本
 * start.tmpl -- 不同对手启动脚本模板
+* scripts/automonitor -- 方便同时观看多场比赛的脚本
