@@ -25,11 +25,6 @@ server_count() {
     ps -o pid= -C rcssserver | wc -l
 }
 
-killall_server() {
-    killall -9 rcssserver
-    killall -9 rcssserver.bin
-}
-
 match() {
     local HOST=$1
 	local PORT=$2
@@ -70,7 +65,7 @@ match() {
 	for i in `seq 1 $ROUNDS`; do
         local RESULT="$RESULT_DIR/`date +%s`"
 		if [ ! -f $RESULT ]; then
-			run_server $OPTIONS 1>$RESULT 2>&1
+			run_server $OPTIONS &> $RESULT
 		fi
         generate_html
 		sleep 5
