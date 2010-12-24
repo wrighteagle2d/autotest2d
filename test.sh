@@ -129,7 +129,7 @@ autotest() {
         local PORT=`expr $DEFAULT_PORT + $i \* 1000`
         match $HOST $PORT &
         i=`expr $i + 1`
-        sleep `expr 600 / $PROCES`
+        sleep `expr 900 / $PROCES`
     done
 }
 
