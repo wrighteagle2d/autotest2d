@@ -52,6 +52,8 @@ match() {
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
+    OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
+    OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 
     if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
         mkdir $LOGDIR
@@ -63,14 +65,7 @@ match() {
 	for i in `seq 1 $ROUNDS`; do
         local RESULT="$RESULT_DIR/`date +%s`"
 		if [ ! -f $RESULT ]; then
-            local TMP=$LEFT_CLIENT #swap clients
-            LEFT_CLIENT=$RIGHT_CLIENT
-            RIGHT_CLIENT=$TMP
-
-            local START_LEFT="-server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
-            local START_RIGHT="-server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
-			
-            run_server $OPTIONS $START_LEFT $START_RIGHT &> $RESULT
+            run_server $OPTIONS &> $RESULT
 		fi
         generate_html
 		sleep 15
