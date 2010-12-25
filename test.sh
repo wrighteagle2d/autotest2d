@@ -30,7 +30,7 @@ match() {
 	local PORT=$2
 
 	local OPTIONS=""
-	local LOGDIR="log_$HOST"
+	local LOGDIR="log_$PORT"
 
     local COACH_PORT=`expr $PORT + 1`
     local OLCOACH_PORT=`expr $PORT + 2`
