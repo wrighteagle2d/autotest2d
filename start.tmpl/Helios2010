@@ -1,4 +1,4 @@
 #!/bin/bash
 
-ssh -f $1 "ulimit -t 180 && cd helios && ./start.sh -h $2 -p $3 &> /dev/null"
+ssh -f $1 "ulimit -t 300 && cd helios && ./start.sh -h $2 -p $3 &> /dev/null"
 sleep 5
