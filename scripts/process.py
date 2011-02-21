@@ -284,6 +284,7 @@ class GameData:
 
     def do_some_formatting(self):
         self.add_line(self.title, color=Color.BLUE)
+        self.add_newline()
 
         left_attention = self.avg_left_goals - self.avg_right_goals - self.attention
         right_attention = self.avg_left_goals - self.avg_right_goals + self.attention
@@ -292,6 +293,28 @@ class GameData:
         non_valid = 0
         miss_count = 0
         miss_matches = 0
+
+        for result in self.result_list:
+            line = Context.Line("%3d%6d:%d%6d:%d" % (result.index, result.left_score, result.right_score, result.left_points, result.right_points))
+            if result.valid:
+                diff = result.left_score - result.right_score
+                if diff <= min_diff:
+                    min_diff = diff
+                    line.color = Color.ORANGE
+                elif diff >= max_diff:
+                    max_diff = diff
+                    line.color = Color.ORANGE
+                elif diff <= left_attention or diff >= right_attention:
+                    line.color = Color.GREEN
+            else:
+                non_valid += 1
+                line.color = Color.RED
+            if result.miss:
+                miss_count += result.miss
+                miss_matches += 1
+
+            if self.verbose or line.color != Color.NONE:
+                self.context.add_line(line)
 
         self.add_newline()
         self.add_line("Left Team Goals Distribution:")
@@ -328,33 +351,6 @@ class GameData:
             self.add_line("Non Valid Game Count: %d (%.2f%%)" % (non_valid, non_valid / float(self.count) * 100), Color.RED)
         if miss_count:
             self.add_line("Total Miss Count: %d (in %d matches, %.2f%%)" % (miss_count, miss_matches, miss_matches / float(self.count) * 100), Color.RED)
-
-        self.add_newline()
-        self.add_newline()
-        self.add_line("Test Details:", Color.BLUE)
-        self.add_line(" No.    Score   Point")
-        for result in self.result_list:
-            line = Context.Line("%3d%6d:%d%6d:%d" % (result.index, result.left_score, result.right_score, result.left_points, result.right_points))
-            if result.valid:
-                diff = result.left_score - result.right_score
-                if diff <= min_diff:
-                    min_diff = diff
-                    line.color = Color.ORANGE
-                elif diff >= max_diff:
-                    max_diff = diff
-                    line.color = Color.ORANGE
-                elif diff <= left_attention or diff >= right_attention:
-                    line.color = Color.GREEN
-            else:
-                non_valid += 1
-                line.color = Color.RED
-            if result.miss:
-                miss_count += result.miss
-                miss_matches += 1
-
-            if self.verbose or line.color != Color.NONE:
-                self.context.add_line(line)
-
 
     def generate_context(self, lines):
         self.title = lines.pop(0)
