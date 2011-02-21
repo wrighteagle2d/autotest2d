@@ -330,7 +330,9 @@ class GameData:
             self.add_line("Total Miss Count: %d (in %d matches, %.2f%%)" % (miss_count, miss_matches, miss_matches / float(self.count) * 100), Color.RED)
 
         self.add_newline()
+        self.add_newline()
         self.add_line("Test Details:", Color.BLUE)
+        self.add_line(" No.    Score   Point")
         for result in self.result_list:
             line = Context.Line("%3d%6d:%d%6d:%d" % (result.index, result.left_score, result.right_score, result.left_points, result.right_points))
             if result.valid:
