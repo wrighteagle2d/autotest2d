@@ -1,8 +1,8 @@
 #!/bin/bash
 
-PROCES=6               #同时比赛的server个数
+PROCES=3               #同时比赛的server个数
 ROUNDS=300             #每个测试过程的比赛场数
-CLIENTS=("192.168.26.104" "192.168.26.120")  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
+CLIENTS=("localhost")  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
 DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
 CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"   #是否记录rcg
