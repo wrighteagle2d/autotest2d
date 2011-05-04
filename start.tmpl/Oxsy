@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ssh -f $1 "ulimit -t 300 && cd /home/oxsy && ./start.sh $2 $3 &> /dev/null"
+sleep 5
