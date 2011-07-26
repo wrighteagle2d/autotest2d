@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ssh -f $1 "ulimit -t 300 && cd helios && ./start.sh $2 $3 $4 $5 &> /dev/null"
+
+sleep 5
