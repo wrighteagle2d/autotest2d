@@ -412,7 +412,7 @@ elif options.html:
     print "</head>"
     print "<body>"
     if options.temp:
-        print "<h1>Test Results<font color=Red>(Can be killed any time)</font></h1>"
+        print "<h1>Test Results<font color=Red> (Can be killed any time!)</font></h1>"
     else:
         print "<h1>Test Results</h1>"
     print "<hr>"
