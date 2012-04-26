@@ -7,6 +7,7 @@ DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
 CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"   #是否记录rcg
 TEXT_LOGGING="false"   #是否记录rcl
+TEMP="true"	       #Can be killed any time?
 
 ###############
 
@@ -76,7 +77,12 @@ generate_html() {
     if [ ! -f $HTML_GENERATING_LOCK ]; then
         touch $HTML $HTML_GENERATING_LOCK
         chmod 777 $HTML $HTML_GENERATING_LOCK 2>/dev/null #allow others to delete or overwrite
-        ./result.sh --html >$HTML
+	if [ $TEMP = "true" ]; then
+		./result.sh -HT >$HTML
+	else
+		./result.sh --html >$HTML
+    	fi
+
         echo -e "<hr>" >>$HTML
         echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
         rm -f $HTML_GENERATING_LOCK

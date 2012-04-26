@@ -387,6 +387,7 @@ parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=
 parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
 parser.add_option("-S", "--simplify", action="store_true", dest="simplify", default=False, help="output simplify")
 parser.add_option("-A", "--analyze", action="store_true", dest="analyze", default=False, help="output curve data")
+parser.add_option("-T", "--temp", action="store_true", dest="temp", default=False, help="means this test can be killed any time")
 
 (options, args) = parser.parse_args()
 
@@ -410,7 +411,10 @@ elif options.html:
     print "<title>Test Results</title> "
     print "</head>"
     print "<body>"
-    print "<h1>Test Results</h1>"
+    if options.temp:
+        print "<h1>Test Results<font color=Red>(Can be killed any time)</font></h1>"
+    else:
+        print "<h1>Test Results</h1>"
     print "<hr>"
     game_data.run(lines, html)
     print "</body>"
