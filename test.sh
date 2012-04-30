@@ -17,7 +17,9 @@ PROCES=1               #同时比赛的server个数
 #)  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
 
 CLIENTS=("localhost")  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
+
 #CLIENTS=("192.168.26.102" "192.168.26.103")  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
+
 ROUNDS=300             #每个测试过程的比赛场数
 DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
 CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
