@@ -27,7 +27,43 @@ GAME_LOGGING="false"   #是否记录rcg
 TEXT_LOGGING="false"   #是否记录rcl
 TEMP="false"           #Can be killed any time?
 
+############### 以下参数不要直接修改，而是通过命令行参数指定
+KILL_AND_RESTART_AS_TEMP="false"
+IN_WRAPPER="false"
+
+while getopts  "r:p:ctki" flag; do
+    case "$flag" in
+        r) ROUNDS=$OPTARG;;
+        p) PROCES=$OPTARG;;
+        c) CONTINUE="true";;
+        t) TEMP="true";;
+        k) KILL_AND_RESTART_AS_TEMP="true";;
+        i) IN_WRAPPER="true";;
+    esac
+done
+
 ###############
+
+if [ $KILL_AND_RESTART_AS_TEMP = "true" ]; then
+    if [ $IN_WRAPPER = "true" ]; then
+        sleep 0.5
+        ./test.sh -ct
+        rm -f $0
+        exit
+    fi
+
+    WRAPPER=`mktemp`
+    cp $0 $WRAPPER
+    chmod +x $WRAPPER
+    $WRAPPER -ik
+    ./kill.sh
+    exit
+fi
+
+echo "#PROCES:" $PROCES
+echo "#ROUNDS:" $ROUNDS
+echo "#CONTINUE:" $CONTINUE
+echo "#TEMP:" $TEMP
 
 RESULT_DIR="result.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
