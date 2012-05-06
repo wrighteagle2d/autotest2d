@@ -55,7 +55,7 @@ if [ $KILL_AND_RESTART_AS_TEMP = "true" ]; then
     WRAPPER=`mktemp`
     cp $0 $WRAPPER
     chmod +x $WRAPPER
-    $WRAPPER -ik
+    $WRAPPER -ik &
     ./kill.sh
     exit
 fi
@@ -188,9 +188,5 @@ autotest() {
     done
 }
 
-if [ $# -gt 0 ]; then
-	autotest
-else
-	$0 $# &
-fi
+autotest &
 
