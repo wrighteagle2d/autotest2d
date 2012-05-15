@@ -44,7 +44,6 @@ while getopts  "r:p:ctki" flag; do
 done
 
 ###############
-
 if [ $KILL_AND_RESTART_AS_TEMP = "true" ]; then
     if [ $IN_WRAPPER = "true" ]; then
         sleep 0.5
@@ -67,6 +66,10 @@ echo "#CONTINUE:" $CONTINUE
 echo "#TEMP:" $TEMP
 
 rm -f $TEMP_MARKER
+if [ $TEMP = "true" ]; then
+    touch $TEMP_MARKER
+    chmod 777 $TEMP_MARKER
+fi
 
 RESULT_DIR="result.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
@@ -75,11 +78,6 @@ HTML="/tmp/result.html"
 HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {
-    if [ $TEMP = "true" ]; then
-        touch $TEMP_MARKER
-        chmod 777 $TEMP_MARKER
-    fi
-
     ulimit -t 300
     rcssserver $*
 }
