@@ -30,6 +30,7 @@ TEMP="false"           #Can be killed any time?
 ############### 以下参数不要直接修改，而是通过命令行参数指定
 KILL_AND_RESTART_AS_TEMP="false"
 IN_WRAPPER="false"
+TEMP_MARKER="/tmp/autotest::temp"
 
 while getopts  "r:p:ctki" flag; do
     case "$flag" in
@@ -65,6 +66,8 @@ echo "#ROUNDS:" $ROUNDS
 echo "#CONTINUE:" $CONTINUE
 echo "#TEMP:" $TEMP
 
+rm -f $TEMP_MARKER
+
 RESULT_DIR="result.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
 TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
@@ -72,8 +75,15 @@ HTML="/tmp/result.html"
 HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {
-	ulimit -t 300
+    if [ $TEMP = "true" ]; then
+        touch $TEMP_MARKER
+        chmod 777 $TEMP_MARKER
+    fi
+
+    ulimit -t 300
     rcssserver $*
+
+    rm -f $TEMP_MARKER
 }
 
 server_count() {
@@ -131,6 +141,7 @@ generate_html() {
     if [ ! -f $HTML_GENERATING_LOCK ]; then
         touch $HTML $HTML_GENERATING_LOCK
         chmod 777 $HTML $HTML_GENERATING_LOCK 2>/dev/null #allow others to delete or overwrite
+
         if [ $TEMP = "true" ]; then
             ./result.sh -HT >$HTML
         else
@@ -186,6 +197,8 @@ autotest() {
         i=`expr $i + 1`
         sleep `expr 900 / $PROCES`
     done
+
+    rm -f $TEMP_MARKER
 }
 
 autotest &
