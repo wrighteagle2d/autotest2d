@@ -82,8 +82,6 @@ run_server() {
 
     ulimit -t 300
     rcssserver $*
-
-    rm -f $TEMP_MARKER
 }
 
 server_count() {
@@ -197,8 +195,6 @@ autotest() {
         i=`expr $i + 1`
         sleep `expr 900 / $PROCES`
     done
-
-    rm -f $TEMP_MARKER
 }
 
 autotest &
