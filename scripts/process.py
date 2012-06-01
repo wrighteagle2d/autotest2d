@@ -274,7 +274,7 @@ class GameData:
         game_count = float(self.count)
 
         try:
-            file = open("total_rounds", "r")
+            file = open("result.d/total_rounds", "r")
             self.remaining_count = int(file.read().strip()) - self.count
             file.close()
         except:
