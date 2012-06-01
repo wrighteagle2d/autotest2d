@@ -8,8 +8,6 @@ BEGIN {
     left_score = -1
     right_score = -1
 
-    left_shoot_count = 0
-
     miss_count = 0
 }
 
@@ -34,9 +32,6 @@ BEGIN {
     else if ($0 ~ /miss a turn_neck/) {
         miss_count += 1
     }
-    else if ($0 ~ /: shoot/) {
-        left_shoot_count += 1
-    }
 }
 
 END {
@@ -45,7 +40,7 @@ END {
     }
 
     if (left_score >= 0 && right_score >= 0) {
-        print left_score, right_score, left_shoot_count, valid, miss_count
+        print left_score, right_score, valid, miss_count
     }
 }
 

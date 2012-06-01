@@ -2,6 +2,7 @@
 
 import sys
 import math
+from collections import defaultdict
 from optparse import OptionParser
 
 class Color:
@@ -115,21 +116,20 @@ def html(line):
 
 class GameData:
     class Result:
-        def __init__(self, index, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss):
+        def __init__(self, index, left_score, right_score, left_points, right_points, valid, miss):
             self.index = index
             self.left_score = left_score
             self.right_score = right_score
             self.left_points = left_points
             self.right_points = right_points
-            self.left_shoot_count = left_shoot_count
             self.valid = valid
             self.miss = miss
 
-    def __init__(self, verbose, analyze):
+    def __init__(self, verbose, curve, map):
         self.count = 0
         self.result_list = []
 
-        self.left_count = -1
+        self.remaining_count = -1
 
         self.attention = 4.0
 
@@ -139,18 +139,23 @@ class GameData:
         self.left_points = 0
         self.right_points = 0
 
-        self.left_total_shoot_count = 0
-
         self.win_count = 0
         self.draw_count = 0
         self.lost_count = 0
 
-        self.left_score_map = {}
-        self.right_score_map = {}
-        self.diff_score_map = {}
+        self.left_score_distri = {}
+        self.right_score_distri = {}
+        self.diff_score_distri = {}
+
+        self.score_map = defaultdict(dict)
+        self.left_min_score = 6000
+        self.left_max_score = -1
+        self.right_min_score = 6000
+        self.right_max_score = -1
 
         self.verbose = verbose
-        self.analyze = analyze
+        self.curve = curve
+        self.map = map
         self.context = Context()
 
         self.avg_left_goals = 0.0
@@ -176,12 +181,22 @@ class GameData:
     def add_newline(self):
         self.context.add_line(Context.Line(""))
 
-    def update(self, left_score, right_score, left_shoot_count, valid, miss):
+    def update(self, left_score, right_score, valid, miss):
         self.count += 1
 
-        self.left_score_map[left_score] = self.left_score_map.get(left_score, 0) + 1
-        self.right_score_map[right_score] = self.right_score_map.get(right_score, 0) + 1
-        self.diff_score_map[left_score - right_score] = self.diff_score_map.get(left_score - right_score, 0) + 1
+        self.left_score_distri[left_score] = self.left_score_distri.get(left_score, 0) + 1
+        self.right_score_distri[right_score] = self.right_score_distri.get(right_score, 0) + 1
+        self.diff_score_distri[left_score - right_score] = self.diff_score_distri.get(left_score - right_score, 0) + 1
+
+        if self.score_map.has_key(left_score) and self.score_map[left_score].has_key(right_score):
+            self.score_map[left_score][right_score] += 1
+        else:
+            self.score_map[left_score][right_score] = 1
+
+        self.left_min_score = min(self.left_min_score, left_score)
+        self.left_max_score = max(self.left_max_score, left_score)
+        self.right_min_score = min(self.right_min_score, right_score)
+        self.right_max_score = max(self.right_max_score, right_score)
 
         left_points = 0
         right_points = 0
@@ -196,24 +211,22 @@ class GameData:
             right_points += 1
             self.draw_count += 1
 
-        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss))
+        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, valid, miss))
 
         self.left_goals += left_score
         self.right_goals += right_score
         self.left_points += left_points
         self.right_points += right_points
 
-        self.left_total_shoot_count += left_shoot_count
-
-        if self.analyze:
+        if self.curve:
             game_count = float(self.count)
             self.win_rate = self.win_count / game_count
             
-            self.calc_confidence_interval()
+            self.compute_confidence_interval()
 
             print self.count, self.win_rate, self.confidence_intervel_left, self.confidence_intervel_right
 
-    def gen_score_map(self, score_map):
+    def gen_score_distri(self, score_distri):
         def bar(percentage):
             length = 33
             bar_length = int(length * percentage)
@@ -232,19 +245,19 @@ class GameData:
             return line
 
         lines = []
-        scores = sorted(score_map.keys())
+        scores = sorted(score_distri.keys())
         for score in range(scores[0], scores[-1] + 1):
             count = 0
             percentage = 0.0
-            if score_map.has_key(score):
-                count = score_map[score]
-                percentage = score_map[score] / float(self.count)
+            if score_distri.has_key(score):
+                count = score_distri[score]
+                percentage = score_distri[score] / float(self.count)
 
             lines.append(Context.Line("`%4d:%6d " % (score, count) + bar(percentage), Color.BLUE, Face.MONOSPACE))
 
         return lines
 
-    def calc_confidence_interval(self):
+    def compute_confidence_interval(self):
         game_count = float(self.count)
 
         self.win_rate_standard_deviation = math.sqrt(self.win_rate * (1.0  - self.win_rate));
@@ -257,12 +270,12 @@ class GameData:
             self.confidence_intervel_right = 1.0
 
 
-    def do_some_calculating(self):
+    def compute(self):
         game_count = float(self.count)
 
         try:
             file = open("total_rounds", "r")
-            self.left_count = int(file.read().strip()) - self.count
+            self.remaining_count = int(file.read().strip()) - self.count
             file.close()
         except:
             pass
@@ -276,18 +289,18 @@ class GameData:
         self.win_rate = self.win_count / game_count
         self.lost_rate = self.lost_count / game_count
 
-        self.calc_confidence_interval()
+        self.compute_confidence_interval()
 
         try:
             self.expected_win_rate = self.win_rate / (self.win_rate + self.lost_rate)
         except:
             pass
 
-        if self.left_count > 0:
-            self.max_win_rate = (self.win_count + self.left_count) / (game_count + self.left_count)
-            self.min_win_rate = self.win_count / (game_count + self.left_count)
+        if self.remaining_count > 0:
+            self.max_win_rate = (self.win_count + self.remaining_count) / (game_count + self.remaining_count)
+            self.min_win_rate = self.win_count / (game_count + self.remaining_count)
 
-    def do_some_formatting(self):
+    def format(self):
         self.add_line(self.title, color=Color.BLUE)
         self.add_newline()
 
@@ -323,19 +336,19 @@ class GameData:
 
         self.add_newline()
         self.add_line("Left Team Goals Distribution:")
-        map(lambda line: self.context.add_line(line), self.gen_score_map(self.left_score_map))
+        map(lambda line: self.context.add_line(line), self.gen_score_distri(self.left_score_distri))
 
         self.add_newline()
         self.add_line("Right Team Goals Distribution:")
-        map(lambda line: self.context.add_line(line), self.gen_score_map(self.right_score_map))
+        map(lambda line: self.context.add_line(line), self.gen_score_distri(self.right_score_distri))
 
         self.add_newline()
         self.add_line("Diff Goals Distribution:")
-        map(lambda line: self.context.add_line(line), self.gen_score_map(self.diff_score_map))
+        map(lambda line: self.context.add_line(line), self.gen_score_distri(self.diff_score_distri))
 
         self.add_newline()
-        if self.left_count > 0:
-            self.add_line("Game Count: %d (%d left)" % (self.count, self.left_count))
+        if self.remaining_count > 0:
+            self.add_line("Game Count: %d (%d left)" % (self.count, self.remaining_count))
         else:
             self.add_line("Game Count: %d" % (self.count))
 
@@ -349,10 +362,7 @@ class GameData:
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (self.win_rate * 100, self.expected_win_rate * 100))
         self.add_line("Left Team: 95%% Confidence Interval [%.2f%%, %.2f%%]" % (self.confidence_intervel_left * 100, self.confidence_intervel_right * 100))
 
-        if self.left_total_shoot_count > 0:
-            self.add_line("Left Team: Shoot Success Rate %.2f%%, (%d/%d, %.2f shoots per match)" % (self.left_goals / float(self.left_total_shoot_count) * 100, self.left_goals, self.left_total_shoot_count, self.left_total_shoot_count / float(self.count)))
-
-        if self.left_count > 0:
+        if self.remaining_count > 0:
             self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (self.max_win_rate * 100, self.min_win_rate * 100), Color.GRAY)
 
         if non_valid:
@@ -367,16 +377,34 @@ class GameData:
             parts = line.split()
             for i in range(len(parts)):
                 parts[i] = int(parts[i])
-            (left_score, right_score, left_shoot_count, valid, miss) = parts
-            self.update(left_score, right_score, left_shoot_count, valid, miss)
+            (left_score, right_score, valid, miss) = parts
+            self.update(left_score, right_score, valid, miss)
 
-        if not self.analyze:
-            self.do_some_calculating()
-            self.do_some_formatting()
+        if not self.curve and not self.map:
+            self.compute()
+            self.format()
+
+        if self.map:
+            self.gen_score_map()
 
     def run(self, lines, method):
         self.generate_context(lines)
         self.context.dump(method)
+
+    def gen_score_map(self):
+        print "# (%d, %d) * (%d, %d)" % (self.left_min_score, self.left_max_score, self.right_min_score, self.right_max_score)
+
+        for i in range(self.left_min_score, self.left_max_score + 1):
+            for j in range(self.right_min_score, self.right_max_score + 1):
+                share = 0.0
+
+                if self.score_map.has_key(i) and self.score_map[i].has_key(j):
+                    share = self.score_map[i][j] / float(self.count)
+
+                print i, j, share
+
+            print
+
 
 usage = "Usage: %prog [options]"
 
@@ -386,8 +414,9 @@ parser.add_option("-N", "--no-color", action="store_true", dest="no_color", defa
 parser.add_option("-D", "--discuz", action="store_true", dest="discuz", default=False, help="print as discuz code format")
 parser.add_option("-H", "--html", action="store_true", dest="html", default=False, help="print as html format")
 parser.add_option("-S", "--simplify", action="store_true", dest="simplify", default=False, help="output simplify")
-parser.add_option("-A", "--analyze", action="store_true", dest="analyze", default=False, help="output curve data")
-parser.add_option("-T", "--temp", action="store_true", dest="temp", default=False, help="means this test can be killed any time")
+parser.add_option("-A", "--curve", action="store_true", dest="curve", default=False, help="output winrate curve data")
+parser.add_option("-M", "--map", action="store_true", dest="map", default=False, help="output score map data")
+parser.add_option("-T", "--temp", action="store_true", dest="temp", default=False, help="can be killed any time")
 
 (options, args) = parser.parse_args()
 
@@ -401,7 +430,7 @@ if len(lines) <= 1: #at least two lines: title + result
     print "No results found, exit"
     sys.exit(1)
 
-game_data = GameData(not options.simplify, options.analyze)
+game_data = GameData(not options.simplify, options.curve, options.map)
 
 if options.discuz:
     game_data.run(lines, discuz)
