@@ -116,12 +116,13 @@ def html(line):
 
 class GameData:
     class Result:
-        def __init__(self, index, left_score, right_score, left_points, right_points, valid, miss):
+        def __init__(self, index, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss):
             self.index = index
             self.left_score = left_score
             self.right_score = right_score
             self.left_points = left_points
             self.right_points = right_points
+            self.left_shoot_count = left_shoot_count
             self.valid = valid
             self.miss = miss
 
@@ -138,6 +139,8 @@ class GameData:
 
         self.left_points = 0
         self.right_points = 0
+
+        self.left_total_shoot_count = 0
 
         self.win_count = 0
         self.draw_count = 0
@@ -181,7 +184,7 @@ class GameData:
     def add_newline(self):
         self.context.add_line(Context.Line(""))
 
-    def update(self, left_score, right_score, valid, miss):
+    def update(self, left_score, right_score, left_shoot_count, valid, miss):
         self.count += 1
 
         self.left_score_distri[left_score] = self.left_score_distri.get(left_score, 0) + 1
@@ -211,12 +214,14 @@ class GameData:
             right_points += 1
             self.draw_count += 1
 
-        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, valid, miss))
+        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss))
 
         self.left_goals += left_score
         self.right_goals += right_score
         self.left_points += left_points
         self.right_points += right_points
+
+        self.left_total_shoot_count += left_shoot_count
 
         if self.curve:
             game_count = float(self.count)
@@ -362,6 +367,9 @@ class GameData:
         self.add_line("Left Team: WinRate %.2f%%, ExpectedWinRate %.2f%%" % (self.win_rate * 100, self.expected_win_rate * 100))
         self.add_line("Left Team: 95%% Confidence Interval [%.2f%%, %.2f%%]" % (self.confidence_intervel_left * 100, self.confidence_intervel_right * 100))
 
+        if self.left_total_shoot_count > 0:
+            self.add_line("Left Team: Shoot Success Rate %.2f%%, (%d/%d, %.2f shoots per match)" % (self.left_goals / float(self.left_total_shoot_count) * 100, self.left_goals, self.left_total_shoot_count, self.left_total_shoot_count / float(self.count)))
+
         if self.remaining_count > 0:
             self.add_line("Left Team: MaxWinRate %.2f%%, MinWinRate %.2f%%" % (self.max_win_rate * 100, self.min_win_rate * 100), Color.GRAY)
 
@@ -377,8 +385,8 @@ class GameData:
             parts = line.split()
             for i in range(len(parts)):
                 parts[i] = int(parts[i])
-            (left_score, right_score, valid, miss) = parts
-            self.update(left_score, right_score, valid, miss)
+            (left_score, right_score, left_shoot_count, valid, miss) = parts
+            self.update(left_score, right_score, left_shoot_count, valid, miss)
 
         if not self.curve and not self.map:
             self.compute()
