@@ -63,12 +63,12 @@ if [ $KILL_AND_RESTART_AS_TEMP = "true" ]; then
     exit
 fi
 
-echo "\$PROCES = " $PROCES
-echo "\$ROUNDS = " $ROUNDS
-echo "\$CONTINUE = " $CONTINUE
-echo "\$TEMP = " $TEMP
-echo "\$TRAINING = " $TRAINING
-echo "\$PLAYER_SEED = " $PLAYER_SEED
+echo "\$PROCES = $PROCES"
+echo "\$ROUNDS = $ROUNDS"
+echo "\$CONTINUE = $CONTINUE"
+echo "\$TEMP = $TEMP"
+echo "\$TRAINING = $TRAINING"
+echo "\$PLAYER_SEED = $PLAYER_SEED"
 
 rm -f $TEMP_MARKER
 if [ $TEMP = "true" ]; then
