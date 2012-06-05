@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ssh -f $1 "ulimit -t 300 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3"
+ssh -f $1 "ulimit -t 300 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3 -o $6"
 
 sleep 5
