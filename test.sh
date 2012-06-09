@@ -31,7 +31,7 @@ TRAINING="false"       #是否是Training模式
 PLAYER_SEED="-1"       #传给server的异构种子，默认为 -1，即由 server 自己决定
 
 ############### 以下参数不要直接修改，而是通过命令行参数指定
-KILL_AND_RESTART_AS_TEMP="false"
+RESTART_AS_TEMP="false"
 IN_WRAPPER="false"
 TEMP_MARKER="/tmp/autotest::temp"
 
@@ -42,13 +42,13 @@ while getopts  "r:p:ctkio" flag; do
         c) CONTINUE="true";;
         t) TEMP="true";;
         o) TRAINING="true";;
-        k) KILL_AND_RESTART_AS_TEMP="true";;
+        k) RESTART_AS_TEMP="true";;
         i) IN_WRAPPER="true";;
     esac
 done
 
 ###############
-if [ $KILL_AND_RESTART_AS_TEMP = "true" ]; then
+if [ $RESTART_AS_TEMP = "true" ]; then
     if [ $IN_WRAPPER = "true" ]; then
         sleep 0.5
         ./test.sh -ct
@@ -97,7 +97,6 @@ match() {
 	local PORT=$2
 
 	local OPTIONS=""
-	local LOGDIR="logs_$PORT"
 
     local COACH_PORT=`expr $PORT + 1`
     local OLCOACH_PORT=`expr $PORT + 2`
@@ -114,8 +113,6 @@ match() {
     OPTIONS="$OPTIONS -server::port=$PORT"
     OPTIONS="$OPTIONS -server::coach_port=$COACH_PORT"
     OPTIONS="$OPTIONS -server::olcoach_port=$OLCOACH_PORT"
-	OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\""
-	OPTIONS="$OPTIONS -server::text_log_dir=\"./$LOGDIR/\""
     OPTIONS="$OPTIONS -player::random_seed=$PLAYER_SEED"
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
@@ -126,29 +123,33 @@ match() {
         OPTIONS="$OPTIONS -server::coach=true -server::coach_w_referee=true"
     fi
 
-    if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
-        mkdir $LOGDIR 2> /dev/null
-    fi
-
     rm -f $HTML_GENERATING_LOCK
     generate_html
 
 	for i in `seq 1 $ROUNDS`; do
         local TIME="`date +%s`"
+        local LOGDIR="logs/$TIME"
         local RESULT="$RESULT_DIR/$TIME"
 
 		if [ ! -f $RESULT ]; then
-            local MSG_LOG_DIR="Logfiles_$PORT_$TIME"
+            local MSG_LOG_DIR="Logfiles_$TIME"
             local FULL_OPTIONS=""
 
+            if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
+                mkdir -p $LOGDIR 2> /dev/null
+            fi
+
+            FULL_OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\" -server::text_log_dir=\"./$LOGDIR/\""
+
             if [ $MSG_LOGGING = "true" ]; then
-                FULL_OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING $MSG_LOG_DIR\""
+                FULL_OPTIONS="$FULL_OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING $MSG_LOG_DIR\""
             else
-                FULL_OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING\""
+                FULL_OPTIONS="$FULL_OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING\""
             fi
 
             run_server $FULL_OPTIONS &> $RESULT
 		fi
+
         generate_html
 		sleep 15
 	done
