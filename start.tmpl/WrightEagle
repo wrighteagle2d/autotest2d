@@ -1,5 +1,9 @@
 #!/bin/bash
 
-ssh -f $1 "ulimit -t 300 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3 -o $6"
+if [ ! -z $7 ]; then #msg log dir name
+    ssh -f $1 "ulimit -t 300 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3 -o $6 -l $7"
+else
+    ssh -f $1 "ulimit -t 300 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3 -o $6"
+fi
 
 sleep 5

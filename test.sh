@@ -25,6 +25,7 @@ DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
 CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="false"   #是否记录rcg
 TEXT_LOGGING="false"   #是否记录rcl
+MSG_LOGGING="false"    #球队是否记录msg log
 TEMP="false"           #Can be killed any time?
 TRAINING="false"       #是否是Training模式
 PLAYER_SEED="-1"       #传给server的异构种子，默认为 -1，即由 server 自己决定
@@ -96,7 +97,7 @@ match() {
 	local PORT=$2
 
 	local OPTIONS=""
-	local LOGDIR="log_$PORT"
+	local LOGDIR="logs_$PORT"
 
     local COACH_PORT=`expr $PORT + 1`
     local OLCOACH_PORT=`expr $PORT + 2`
@@ -119,7 +120,6 @@ match() {
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
-    OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING\""
     OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 
     if [ $TRAINING = "true" ]; then
@@ -127,16 +127,27 @@ match() {
     fi
 
     if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
-        mkdir $LOGDIR
+        mkdir $LOGDIR 2> /dev/null
     fi
 
     rm -f $HTML_GENERATING_LOCK
     generate_html
 
 	for i in `seq 1 $ROUNDS`; do
-        local RESULT="$RESULT_DIR/`date +%s`"
+        local TIME="`date +%s`"
+        local RESULT="$RESULT_DIR/$TIME"
+
 		if [ ! -f $RESULT ]; then
-            run_server $OPTIONS &> $RESULT
+            local MSG_LOG_DIR="Logfiles_$PORT_$TIME"
+            local FULL_OPTIONS=""
+
+            if [ $MSG_LOGGING = "true" ]; then
+                FULL_OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING $MSG_LOG_DIR\""
+            else
+                FULL_OPTIONS="$OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING\""
+            fi
+
+            run_server $FULL_OPTIONS &> $RESULT
 		fi
         generate_html
 		sleep 15
