@@ -127,8 +127,8 @@ match() {
     generate_html
 
 	for i in `seq 1 $ROUNDS`; do
-        local TIME="`date +%s`"
-        local LOGDIR="logs/$TIME"
+        local TIME="`date +%Y%m%d%H%M`"
+        local LOGDIR="logs"
         local RESULT="$RESULT_DIR/$TIME"
 
 		if [ ! -f $RESULT ]; then
