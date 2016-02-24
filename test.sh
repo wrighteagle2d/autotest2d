@@ -20,7 +20,7 @@ CLIENTS=("localhost")
 
 #CLIENTS=("192.168.26.102" "192.168.26.103")
 
-ROUNDS=300             #number of games
+ROUNDS=300             #number of games for each server
 DEFAULT_PORT=6000      #default port connecting to server
 CONTINUE="false"       #continue from last test
 GAME_LOGGING="true"    #record RCG logs
