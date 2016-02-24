@@ -1,1 +1,11 @@
-start.tmpl/WrightEagle
+#!/bin/bash
+
+VERSION="Release"
+
+if [ ! -z $7 ]; then #msg log dir name
+    ssh -f $1 "ulimit -t 300 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3 -o $6 -l $7 -v $VERSION"
+else
+    ssh -f $1 "ulimit -t 300 && ulimit -c unlimited && cd WrightEagle && ./start.sh -h $2 -p $3 -o $6 -v $VERSION"
+fi
+
+sleep 5
