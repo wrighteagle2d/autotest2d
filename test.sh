@@ -78,6 +78,7 @@ if [ $TEMP = "true" ]; then
 fi
 
 RESULT_DIR="result.d"
+LOG_DIR="log.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
 TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
 HTML="/tmp/result.html"
@@ -110,8 +111,6 @@ match() {
     local LEFT_CLIENT=${CLIENTS[$a]}
     local RIGHT_CLIENT=${CLIENTS[$b]}
 
-    local TEMP_LOG_NAME="$RANDOM"
-
     OPTIONS="$OPTIONS -server::port=$PORT"
     OPTIONS="$OPTIONS -server::coach_port=$COACH_PORT"
     OPTIONS="$OPTIONS -server::olcoach_port=$OLCOACH_PORT"
@@ -120,7 +119,6 @@ match() {
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
 	OPTIONS="$OPTIONS -server::game_log_compression=1 -server::text_log_compression=1"
-	OPTIONS="$OPTIONS -server::game_log_fixed_name=\"$TEMP_LOG_NAME\" -server::text_log_fixed_name=\"$TEMP_LOG_NAME\""
 	OPTIONS="$OPTIONS -server::game_log_fixed=1 -server::text_log_fixed=1 "
     OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 
@@ -133,19 +131,14 @@ match() {
 
 	for i in `seq 1 $ROUNDS`; do
         local TIME="`date +%Y%m%d%H%M`"
-        local LOGDIR="logs"
         local RESULT="$RESULT_DIR/$TIME"
 
 		if [ ! -f $RESULT ]; then
             local MSG_LOG_DIR="Logfiles_$TIME"
             local FULL_OPTIONS=""
 
-            if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
-                rm -fr $LOGDIR
-                mkdir -p $LOGDIR 2>/dev/null
-            fi
-
-            FULL_OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\" -server::text_log_dir=\"./$LOGDIR/\""
+            FULL_OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOG_DIR/\" -server::text_log_dir=\"./$LOG_DIR/\""
+            FULL_OPTIONS="$FULL_OPTIONS -server::game_log_fixed_name=\"$TIME\" -server::text_log_fixed_name=\"$TIME\""
 
             if [ $MSG_LOGGING = "true" ]; then
                 FULL_OPTIONS="$FULL_OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING $MSG_LOG_DIR\""
@@ -190,8 +183,10 @@ autotest() {
         if [ -d $RESULT_DIR ]; then
 			echo "Warning: previous test result left, backuped"
 			mv $RESULT_DIR ${RESULT_DIR}_`date +"%F_%H%M"`
+			mv $LOG_DIR ${LOG_DIR}_`date +"%F_%H%M"`
         fi
         mkdir $RESULT_DIR || exit
+        mkdir $LOG_DIR || exit
         TOTAL_ROUNDS=`expr $PROCES '*' $ROUNDS`
         echo $TOTAL_ROUNDS >$TOTAL_ROUNDS_FILE
         echo `date` >$TIME_STAMP_FILE
@@ -219,7 +214,7 @@ autotest() {
         local PORT=`expr $DEFAULT_PORT + $i \* 1000`
         match $HOST $PORT &
         i=`expr $i + 1`
-        sleep `expr 900 / $PROCES`
+        sleep `expr 60 / $PROCES`
     done
 }
 

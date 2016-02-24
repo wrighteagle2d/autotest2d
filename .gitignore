@@ -1,3 +1,4 @@
-logs
+log.d
+log.d_*
 result.d
 result.d_*
