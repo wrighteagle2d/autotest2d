@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=4               #同时比赛的server个数
+PROCES=4               #number of simultaneously running servers
 
 #CLIENTS=(
 #    "192.168.26.102"
@@ -14,23 +14,23 @@ PROCES=4               #同时比赛的server个数
 #    "192.168.26.120"
 #    "192.168.26.102"
 #    "192.168.26.103"
-#)  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
+#)  #IPs of machines running clients，CLIENTS=("localhost") for testing on localhost，has to be configured as password-less login for SSH
 
-CLIENTS=("localhost")  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
+CLIENTS=("localhost")
 
-#CLIENTS=("192.168.26.102" "192.168.26.103")  #跑球队的机器ip列表，本地测试即为： CLIENTS=("localhost")，需要配置好无密码登录
+#CLIENTS=("192.168.26.102" "192.168.26.103")
 
-ROUNDS=300             #每个测试过程的比赛场数
-DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
-CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
-GAME_LOGGING="true"   #是否记录rcg
-TEXT_LOGGING="true"   #是否记录rcl
-MSG_LOGGING="false"    #球队是否记录msg log
-TEMP="false"           #Can be killed any time?
-TRAINING="false"       #是否是Training模式
-PLAYER_SEED="-1"       #传给server的异构种子，默认为 -1，即由 server 自己决定
+ROUNDS=300             #number of games
+DEFAULT_PORT=6000      #default port connecting to server
+CONTINUE="false"       #continue from last test
+GAME_LOGGING="true"    #record RCG logs
+TEXT_LOGGING="true"    #record RCL logs
+MSG_LOGGING="false"    #record MSG logs for WrightEagle
+TEMP="false"           #can be killed any time?
+TRAINING="false"       #training mode
+PLAYER_SEED="-1"       #player seed, -1 means random seed
 
-############### 以下参数不要直接修改，而是通过命令行参数指定
+############# do not need to change following parameters
 RESTART_AS_TEMP="false"
 IN_WRAPPER="false"
 TEMP_MARKER="/tmp/autotest::temp"
