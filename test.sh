@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=3               #同时比赛的server个数
+PROCES=4               #同时比赛的server个数
 
 #CLIENTS=(
 #    "192.168.26.102"
@@ -24,7 +24,7 @@ ROUNDS=300             #每个测试过程的比赛场数
 DEFAULT_PORT=6000      #默认的server监听球员和monitor的端口号
 CONTINUE="false"       #是否是继续上一次的测试（如果继续将不会删除上次测试的结果数据）
 GAME_LOGGING="true"   #是否记录rcg
-TEXT_LOGGING="true"   #是否记录rcl
+TEXT_LOGGING="false"   #是否记录rcl
 MSG_LOGGING="false"    #球队是否记录msg log
 TEMP="false"           #Can be killed any time?
 TRAINING="false"       #是否是Training模式
@@ -110,13 +110,18 @@ match() {
     local LEFT_CLIENT=${CLIENTS[$a]}
     local RIGHT_CLIENT=${CLIENTS[$b]}
 
+    local TEMP_LOG_NAME="$RANDOM"
+
     OPTIONS="$OPTIONS -server::port=$PORT"
     OPTIONS="$OPTIONS -server::coach_port=$COACH_PORT"
     OPTIONS="$OPTIONS -server::olcoach_port=$OLCOACH_PORT"
     OPTIONS="$OPTIONS -player::random_seed=$PLAYER_SEED"
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
-	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::game_log_compression=1 -server::text_logging=$TEXT_LOGGING -server::text_log_compression=1"
+	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
+	OPTIONS="$OPTIONS -server::game_log_compression=1 -server::text_log_compression=1"
+	OPTIONS="$OPTIONS -server::game_log_fixed_name=$TEMP_LOG_NAME -server::text_log_fixed_name=$TEMP_LOG_NAME"
+	OPTIONS="$OPTIONS -server::game_log_fixed=1 -server::text_log_fixed=1 "
     OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 
     if [ $TRAINING = "true" ]; then
@@ -136,7 +141,8 @@ match() {
             local FULL_OPTIONS=""
 
             if [ $GAME_LOGGING = "true" ] || [ $TEXT_LOGGING = "true" ]; then
-                mkdir -p $LOGDIR 2> /dev/null
+                rm -fr $LOGDIR
+                mkdir -p $LOGDIR 2>/dev/null
             fi
 
             FULL_OPTIONS="$OPTIONS -server::game_log_dir=\"./$LOGDIR/\" -server::text_log_dir=\"./$LOGDIR/\""
@@ -147,7 +153,7 @@ match() {
                 FULL_OPTIONS="$FULL_OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING\""
             fi
 
-            run_server $FULL_OPTIONS &> $RESULT
+            run_server $FULL_OPTIONS &>$RESULT
 		fi
 
         generate_html
