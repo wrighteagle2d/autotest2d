@@ -83,7 +83,7 @@ RESULT_DIR="result.d"
 LOG_DIR="log.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
 TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
-HTML="result.html"
+HTML="index.html"
 HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {

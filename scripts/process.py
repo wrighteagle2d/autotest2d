@@ -454,6 +454,10 @@ elif options.html:
         print "<h1>Test Results</h1>"
     print "<hr>"
     game_data.run(lines, html)
+    print "<hr>"
+    print '<img src="result.d/curve.png" alt="Winning Rate" style="width:304px;height:190px;">'
+    print "<hr>"
+    print '<img src="result.d/map.png" alt="Score Map" style="width:304px;height:190px;">'
     print "</body>"
 elif options.no_color:
     game_data.run(lines, no_color)
