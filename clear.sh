@@ -18,6 +18,6 @@
 #===============================================================================
 
 set -o nounset                              # Treat unset variables as an error
-rm -fr log.d/ result.d/ log.d_* result.d_*
 
+rm -fr log.d/ result.d/ log.d_* result.d_* result.html
 

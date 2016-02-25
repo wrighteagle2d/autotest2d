@@ -30,7 +30,7 @@ TEMP="false"           #can be killed any time?
 TRAINING="false"       #training mode
 PLAYER_SEED="-1"       #player seed, -1 means random seed
 SYNCH_MODE="1"         #synch mode
-FULLSTATE="1"          #full state mode
+FULLSTATE="0"          #full state mode
 
 ############# do not need to change following parameters
 RESTART_AS_TEMP="false"
@@ -83,7 +83,7 @@ RESULT_DIR="result.d"
 LOG_DIR="log.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
 TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
-HTML="/tmp/result.html"
+HTML="result.html"
 HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {
