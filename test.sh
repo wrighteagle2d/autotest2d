@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=4               #number of simultaneously running servers
+PROCES=5              #number of simultaneously running servers
 
 #CLIENTS=(
 #    "192.168.26.102"
@@ -20,7 +20,7 @@ CLIENTS=("localhost")
 
 #CLIENTS=("192.168.26.102" "192.168.26.103")
 
-ROUNDS=300             #number of games for each server
+ROUNDS=200             #number of games for each server
 DEFAULT_PORT=6000      #default port connecting to server
 CONTINUE="false"       #continue from last test
 GAME_LOGGING="true"    #record RCG logs
@@ -88,6 +88,7 @@ HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {
     ulimit -t 300
+    echo rcssserver $*
     rcssserver $*
 }
 
@@ -134,7 +135,7 @@ match() {
     generate_html
 
 	for i in `seq 1 $ROUNDS`; do
-        local TIME="`date +%Y%m%d%H%M`"
+        local TIME="`date +%Y%m%d%H%M`_$RANDOM"
         local RESULT="$RESULT_DIR/$TIME"
 
 		if [ ! -f $RESULT ]; then
@@ -150,11 +151,11 @@ match() {
                 FULL_OPTIONS="$FULL_OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING\""
             fi
 
+            echo run_server $FULL_OPTIONS
             run_server $FULL_OPTIONS &>$RESULT
 		fi
 
         generate_html
-		sleep 15
 	done
 }
 
@@ -218,7 +219,6 @@ autotest() {
         local PORT=`expr $DEFAULT_PORT + $i \* 1000`
         match $HOST $PORT &
         i=`expr $i + 1`
-        sleep `expr 60 / $PROCES`
     done
 }
 
