@@ -45,7 +45,7 @@ END {
     }
 
     if (left_score >= 0 && right_score >= 0) {
-        print left_score, right_score, left_shoot_count, valid, miss_count
+        print left_score, right_score, left_shoot_count, valid, miss_count, FILENAME
     }
 }
 

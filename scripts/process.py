@@ -116,8 +116,9 @@ def html(line):
 
 class GameData:
     class Result:
-        def __init__(self, index, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss):
+        def __init__(self, index, filename, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss):
             self.index = index
+            self.filename = filename
             self.left_score = left_score
             self.right_score = right_score
             self.left_points = left_points
@@ -128,6 +129,7 @@ class GameData:
 
     def __init__(self, verbose, curve, map):
         self.count = 0
+        self.filename = 'null'
         self.result_list = []
 
         self.remaining_count = -1
@@ -184,7 +186,7 @@ class GameData:
     def add_newline(self):
         self.context.add_line(Context.Line(""))
 
-    def update(self, left_score, right_score, left_shoot_count, valid, miss):
+    def update(self, left_score, right_score, left_shoot_count, valid, miss, filename):
         self.count += 1
 
         self.left_score_distri[left_score] = self.left_score_distri.get(left_score, 0) + 1
@@ -214,7 +216,7 @@ class GameData:
             right_points += 1
             self.draw_count += 1
 
-        self.result_list.append(self.Result(self.count, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss))
+        self.result_list.append(self.Result(self.count, filename, left_score, right_score, left_points, right_points, left_shoot_count, valid, miss))
 
         self.left_goals += left_score
         self.right_goals += right_score
@@ -318,7 +320,7 @@ class GameData:
         miss_matches = 0
 
         for result in self.result_list:
-            line = Context.Line("%3d%6d:%d%6d:%d" % (result.index, result.left_score, result.right_score, result.left_points, result.right_points))
+            line = Context.Line("%3d%6d:%d%6d:%d      [%s]" % (result.index, result.left_score, result.right_score, result.left_points, result.right_points, result.filename))
             if result.valid:
                 diff = result.left_score - result.right_score
                 if diff <= min_diff:
@@ -383,10 +385,8 @@ class GameData:
 
         for line in lines:
             parts = line.split()
-            for i in range(len(parts)):
-                parts[i] = int(parts[i])
-            (left_score, right_score, left_shoot_count, valid, miss) = parts
-            self.update(left_score, right_score, left_shoot_count, valid, miss)
+            parts = map(int, parts[:-1]) + parts[-1:]
+            self.update(*parts)
 
         if not self.curve and not self.map:
             self.compute()
