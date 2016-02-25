@@ -443,22 +443,26 @@ game_data = GameData(not options.simplify, options.curve, options.map)
 if options.discuz:
     game_data.run(lines, discuz)
 elif options.html:
-    print "<head> "
-    print '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-    print "<title>Test Results</title> "
-    print "</head>"
-    print "<body>"
+    print """
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="refresh" content="60">
+<title>Test Results</title>
+</head>
+<body>
+"""
     if options.temp:
         print "<h1>Test Results<font color=Red> (Can be killed any time!)</font></h1>"
     else:
         print "<h1>Test Results</h1>"
     print "<hr>"
     game_data.run(lines, html)
-    print "<hr>"
-    print '<img src="result.d/curve.png" alt="Winning Rate" style="width:304px;height:190px;">'
-    print "<hr>"
-    print '<img src="result.d/map.png" alt="Score Map" style="width:304px;height:190px;">'
-    print "</body>"
+    print """
+<hr>
+<img src="result.d/curve.png" alt="Winning Rate" style="width:608px;height:380px;">
+<img src="result.d/map.png" alt="Score Map" style="width:608px;height:380px;">
+</body>
+"""
 elif options.no_color:
     game_data.run(lines, no_color)
 else:

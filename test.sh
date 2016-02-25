@@ -151,10 +151,10 @@ match() {
                 FULL_OPTIONS="$FULL_OPTIONS -server::team_l_start=\"./start_left $LEFT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT $TRAINING\""
             fi
 
-            echo run_server $FULL_OPTIONS
             run_server $FULL_OPTIONS &>$RESULT
 		fi
 
+        sleep 1
         generate_html
 	done
 }
@@ -170,6 +170,7 @@ generate_html() {
             ./result.sh --html >$HTML
     	fi
 
+        ./analyze.sh 2>/dev/null
         echo -e "<hr>" >>$HTML
         echo -e "<p><small>"`whoami`" @ "`date`"</small></p>" >>$HTML
         rm -f $HTML_GENERATING_LOCK
@@ -219,6 +220,7 @@ autotest() {
         local PORT=`expr $DEFAULT_PORT + $i \* 1000`
         match $HOST $PORT &
         i=`expr $i + 1`
+        sleep 1
     done
 }
 
