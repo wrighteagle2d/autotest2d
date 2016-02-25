@@ -29,6 +29,8 @@ MSG_LOGGING="false"    #record MSG logs for WrightEagle
 TEMP="false"           #can be killed any time?
 TRAINING="false"       #training mode
 PLAYER_SEED="-1"       #player seed, -1 means random seed
+SYNCH_MODE="1"         #synch mode
+FULLSTATE="1"          #full state mode
 
 ############# do not need to change following parameters
 RESTART_AS_TEMP="false"
@@ -119,7 +121,9 @@ match() {
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
 	OPTIONS="$OPTIONS -server::game_log_compression=1 -server::text_log_compression=1"
-	OPTIONS="$OPTIONS -server::game_log_fixed=1 -server::text_log_fixed=1 "
+	OPTIONS="$OPTIONS -server::game_log_fixed=1 -server::text_log_fixed=1"
+	OPTIONS="$OPTIONS -server::synch_mode=$SYNCH_MODE"
+	OPTIONS="$OPTIONS -server::fullstate_l=$FULLSTATE -server::fullstate_r=$FULLSTATE"
     OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 
     if [ $TRAINING = "true" ]; then
