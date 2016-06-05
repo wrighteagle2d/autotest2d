@@ -10,7 +10,7 @@
 * start.tmpl -- templates of start scripts
 * scripts/automonitor -- start monitors
 
-## Example resutls:
+## Example outputs:
 ### Left Team Goals Distribution:
 *   0:   162 \[#####                            \] 18.00%
 *   1:   276 \[##########                       \] 30.67%
