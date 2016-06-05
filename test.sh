@@ -23,14 +23,15 @@ CLIENTS=("localhost")
 ROUNDS=200             #number of games for each server
 DEFAULT_PORT=6000      #default port connecting to server
 CONTINUE="false"       #continue from last test
-GAME_LOGGING="true"    #record RCG logs
-TEXT_LOGGING="true"    #record RCL logs
+GAME_LOGGING="false"   #record RCG logs
+TEXT_LOGGING="false"   #record RCL logs
 MSG_LOGGING="false"    #record MSG logs for WrightEagle
 TEMP="false"           #can be killed any time?
 TRAINING="false"       #training mode
-PLAYER_SEED="-1"       #player seed, -1 means random seed
+RANDOM_SEED="-1"       #random seed, -1 means random seeding
 SYNCH_MODE="1"         #synch mode
-FULLSTATE="0"          #full state mode
+FULLSTATE_L="0"        #full state mode for left
+FULLSTATE_R="0"        #full state mode for right
 
 ############# do not need to change following parameters
 RESTART_AS_TEMP="false"
@@ -71,7 +72,7 @@ echo "\$ROUNDS = $ROUNDS"
 echo "\$CONTINUE = $CONTINUE"
 echo "\$TEMP = $TEMP"
 echo "\$TRAINING = $TRAINING"
-echo "\$PLAYER_SEED = $PLAYER_SEED"
+echo "\$RANDOM_SEED = $RANDOM_SEED"
 
 rm -f $TEMP_MARKER
 if [ $TEMP = "true" ]; then
@@ -83,7 +84,7 @@ RESULT_DIR="result.d"
 LOG_DIR="log.d"
 TOTAL_ROUNDS_FILE="$RESULT_DIR/total_rounds"
 TIME_STAMP_FILE="$RESULT_DIR/time_stamp"
-HTML="index.html"
+HTML="$RESULT_DIR/index.html"
 HTML_GENERATING_LOCK="/tmp/autotest_html_generating"
 
 run_server() {
@@ -117,14 +118,14 @@ match() {
     OPTIONS="$OPTIONS -server::port=$PORT"
     OPTIONS="$OPTIONS -server::coach_port=$COACH_PORT"
     OPTIONS="$OPTIONS -server::olcoach_port=$OLCOACH_PORT"
-    OPTIONS="$OPTIONS -player::random_seed=$PLAYER_SEED"
+    OPTIONS="$OPTIONS -player::random_seed=$RANDOM_SEED"
 	OPTIONS="$OPTIONS -server::nr_normal_halfs=2 -server::nr_extra_halfs=0"
 	OPTIONS="$OPTIONS -server::penalty_shoot_outs=false -server::auto_mode=on"
 	OPTIONS="$OPTIONS -server::game_logging=$GAME_LOGGING -server::text_logging=$TEXT_LOGGING"
 	OPTIONS="$OPTIONS -server::game_log_compression=1 -server::text_log_compression=1"
 	OPTIONS="$OPTIONS -server::game_log_fixed=1 -server::text_log_fixed=1"
 	OPTIONS="$OPTIONS -server::synch_mode=$SYNCH_MODE"
-	OPTIONS="$OPTIONS -server::fullstate_l=$FULLSTATE -server::fullstate_r=$FULLSTATE"
+	OPTIONS="$OPTIONS -server::fullstate_l=$FULLSTATE_L -server::fullstate_r=$FULLSTATE_R"
     OPTIONS="$OPTIONS -server::team_r_start=\"./start_right $RIGHT_CLIENT $HOST $PORT $COACH_PORT $OLCOACH_PORT\""
 
     if [ $TRAINING = "true" ]; then

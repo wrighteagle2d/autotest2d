@@ -459,8 +459,8 @@ elif options.html:
         print "<h1>Test Results</h1>"
     print """
 <hr>
-<img src="result.d/curve.png" alt="Winning Rate" style="width:640px;height:400px;">
-<img src="result.d/map.png" alt="Score Map" style="width:640px;height:400px;">
+<img src="curve.png" alt="Winning Rate" style="width:640px;height:400px;">
+<img src="map.png" alt="Score Map" style="width:640px;height:400px;">
 <hr>
 <p>
 """
