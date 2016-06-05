@@ -1,5 +1,5 @@
 # autotest2d
-Auto test scripts for RoboCup soccer simulation 2d games 
+## Auto test scripts for RoboCup soccer simulation 2d games 
 
 * test.sh -- run auto test
 * kill.sh -- stop test
@@ -10,10 +10,8 @@ Auto test scripts for RoboCup soccer simulation 2d games
 * start.tmpl -- templates of start scripts
 * scripts/automonitor -- start monitors
 
-Example resutls:
-
-Left Team Goals Distribution:
-
+## Example resutls:
+### Left Team Goals Distribution:
 *   0:   162 \[#####                            \] 18.00%
 *   1:   276 \[##########                       \] 30.67%
 *   2:   249 \[#########                        \] 27.67%
@@ -22,8 +20,7 @@ Left Team Goals Distribution:
 *   5:    12 \[                                 \]  1.33%
 *   6:     6 \[                                 \]  0.67%
 
-Right Team Goals Distribution:
-
+### Right Team Goals Distribution:
 *   0:   245 \[########                         \] 27.22%
 *   1:   354 \[############                     \] 39.33%
 *   2:   190 \[######                           \] 21.11%
@@ -32,8 +29,7 @@ Right Team Goals Distribution:
 *   5:     5 \[                                 \]  0.56%
 *   6:     1 \[                                 \]  0.11%
 
-Diff Goals Distribution:
-
+### Diff Goals Distribution:
 *  -6:     1 \[                                 \]  0.11%
 *  -5:     3 \[                                 \]  0.33%
 *  -4:     6 \[                                 \]  0.67%
@@ -48,25 +44,15 @@ Diff Goals Distribution:
 *   5:     6 \[                                 \]  0.67%
 *   6:     1 \[                                 \]  0.11%
 
-Game Count: 900
-
-Goals: 1523 : 1104 (diff: 419)
-
-Points: 1546 : 931 (diff: 615)
-
-Avg Goals: 1.69 : 1.23 (diff: 0.47)
-
-Avg Points: 1.72 : 1.03 (diff: 0.68)
-
-Left Team: Win 441, Draw 223, Lost 236
-
-Left Team: WinRate 49.00%, ExpectedWinRate 65.14%
-
-Left Team: 95% Confidence Interval \[45.73%, 52.27%\]
-
-Left Team: Shoot Success Rate 54.78%, (1523/2780, 3.09 shoots per match)
-
-Non Valid Game Count: 9 (1.00%)
-
-Total Miss Count: 8 (in 8 matches, 0.89%)
+### Game Count: 900
+* Goals: 1523 : 1104 (diff: 419)
+* Points: 1546 : 931 (diff: 615)
+* Avg Goals: 1.69 : 1.23 (diff: 0.47)
+* Avg Points: 1.72 : 1.03 (diff: 0.68)
+* Left Team: Win 441, Draw 223, Lost 236
+* Left Team: WinRate 49.00%, ExpectedWinRate 65.14%
+* Left Team: 95% Confidence Interval \[45.73%, 52.27%\]
+* Left Team: Shoot Success Rate 54.78%, (1523/2780, 3.09 shoots per match)
+* Non Valid Game Count: 9 (1.00%)
+* Total Miss Count: 8 (in 8 matches, 0.89%)
 
