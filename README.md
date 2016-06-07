@@ -11,6 +11,11 @@
 * scripts/automonitor -- start monitors
 
 ## Example outputs:
+
+![output](http://github.com/aijunbai/autotest2d/blob/master/examples/output.png)
+![curve](http://github.com/aijunbai/autotest2d/blob/master/examples/curve.png)
+![score](http://github.com/aijunbai/autotest2d/blob/master/examples/score.png)
+
 ### Left Team Goals Distribution:
 *   0:   162 \[#####                            \] 18.00%
 *   1:   276 \[##########                       \] 30.67%
