@@ -12,9 +12,9 @@
 
 ## Example outputs:
 
-![alt tag](http://github.com/aijunbai/autotest2d/blob/master/examples/output.png "Output")
-![alt tag](http://github.com/aijunbai/autotest2d/blob/master/examples/curve.png "Game Curve")
-![alt tag](http://github.com/aijunbai/autotest2d/blob/master/examples/score.png "Score Map")
+![alt tag](examples/output.png "Output")
+![alt tag](examples/curve.png "Game Curve")
+![alt tag](examples/score.png "Score Map")
 
 ### Left Team Goals Distribution:
 *   0:   162 \[#####                            \] 18.00%
