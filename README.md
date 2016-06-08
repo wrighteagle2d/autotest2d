@@ -13,11 +13,11 @@
 ## Example outputs:
 
 - Output:  
-![alt tag](examples/output.png "Output")
+![examples/output.png](examples/output.png "Output")
 
 - Game Curve:  
-![alt tag](examples/curve.png "Game Curve")
+![examples/curve.png](examples/curve.png "Game Curve")
 
 - Score Map:  
-![alt tag](examples/score.png "Score Map")
+![examples/score.png](examples/score.png "Score Map")
 
