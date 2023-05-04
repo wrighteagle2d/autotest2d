@@ -1,5 +1,5 @@
 #!/bin/bash
 
-ssh -f $1 "ulimit -t 300 && cd helios && ./start.sh $2 $3 $4 $5 &> /dev/null"
+cd ~/rcss/bin/thunder/bin/src && ./start.sh -h $2 -p $3
 
 sleep 5

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROCES=5              #number of simultaneously running servers
+PROCES=5           #number of simultaneously running servers
 
 #CLIENTS=(
 #    "192.168.26.102"
@@ -20,13 +20,13 @@ CLIENTS=("localhost")
 
 #CLIENTS=("192.168.26.102" "192.168.26.103")
 
-ROUNDS=200             #number of games for each server
+ROUNDS=20             #number of games for each server
 DEFAULT_PORT=6000      #default port connecting to server
 CONTINUE="false"       #continue from last test
-GAME_LOGGING="false"   #record RCG logs
-TEXT_LOGGING="false"   #record RCL logs
+GAME_LOGGING="true"   #record RCG logs
+TEXT_LOGGING="true"   #record RCL logs
 MSG_LOGGING="false"    #record MSG logs for WrightEagle
-TEMP="false"           #can be killed any time?
+TEMP="true"           #can be killed any time?
 TRAINING="false"       #training mode
 RANDOM_SEED="-1"       #random seed, -1 means random seeding
 SYNCH_MODE="1"         #synch mode
