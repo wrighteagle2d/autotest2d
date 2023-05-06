@@ -1,6 +1,26 @@
 # autotest2d
 Auto test scripts for RoboCup soccer simulation 2d games 
 
+## How to RUN
+you should edit your left team and right team directory for binaries of teams in the start_left and start_right files.
+
+``` bash
+test.sh start_left start_right
+```
+
+also you can see the results until now while the test.sh script is running by executing the following command.
+
+``` bash
+result.sh
+```
+
+## How to Terminate
+to kill the processes and open up the results for new and other simulations, please execute the following command.
+
+``` bash
+kill.sh
+```
+
 ## Usages
 * Configure `PROCES` in `test.sh` as the number of simultaneously running rcssservers (each rcssserver will run in a different port automatically)
 * Configure `CLIENTS` in `test.sh` to be the list of client machines running teams
