@@ -1,6 +1,9 @@
 # autotest2d
 Auto test scripts for RoboCup soccer simulation 2d games 
 
+## Prequisites
+except python3 nothing. :)
+
 ## How to RUN
 you should edit your left team and right team directory for binaries of teams in the start_left and start_right files.
 
