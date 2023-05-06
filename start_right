@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd ~/rcss/bin/thunder/bin/src && ./start.sh -h $2 -p $3
+cd ~/APH505/Robotics/robotics-lab/projects/R32D-main/R32D/src && ./start.sh -h $2 -p $3
 
 sleep 5
